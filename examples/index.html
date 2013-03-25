@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <title>Grid - grid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="nico 0.2.4" />
+    <link type="image/x-icon" href="../static/css/favicon.ico" rel="icon">
+    <link rel="stylesheet" href="../static/css/normalize.css" />
+    <link rel="stylesheet" href="../static/css/site.css" />
+    <link rel="stylesheet" href="../static/css/solarized.css" />
+    <script src="http://static.alipayobjects.com/seajs/1.3.1/sea.js"></script>
+    <script src="../static/js/arale-helper.js"></script>
+    <script src="../static/js/site.js"></script><script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36247332-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = 'https://ssl.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<script>
+  (function() {
+    var data;
+    seajs._package = data = {"name":"grid","version":"0.0.1","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    data.dependencies && (delete data.dependencies['$'])
+    data.devDependencies && (delete data.devDependencies['$'])
+
+    seajs.config({ alias: data.dependencies })
+    seajs.config({ alias: data.devDependencies })
+    seajs.config({ alias: {"grid":"../src/grid.js"} })
+
+    // for alice
+    for(var dep in data.dependencies) {
+        // 如果依赖的是样式模块
+        if (data.dependencies[dep].indexOf('.css') > 0) {
+            seajs.use(dep);
+        }
+    }
+  })();
+</script>
+    <!--[if lt IE 9]>
+    <script src="../static/js/html5shiv.js"></script>
+    <![endif]-->
+    
+  </head>
+  <body>
+    <div id="body-wrapper">
+      <aside id="sidebar-wrapper">
+      <h1>
+          <a href="../">Grid</a><sup class="package-root"><a href="/">kjui</a></sup>
+      </h1>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">0.0.1</a></p>
+        <p class="description">grid</p>
+        <ul id="navigation" role="navigation">
+          <li><a href="../">文档</a></li>
+          <li><a href="../examples/">演示</a></li>
+        </ul>
+        
+
+<ul id="module-output"> 
+</ul>
+<div id="output-card">
+    <h3>kjui/grid/0.0.1/<a target="_blank" id="output-file"></a></h3>
+    <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
+</div>
+
+      </aside>
+      <div id="content-wrapper">
+        <div id="content">
+<article class="hentry">
+  <h1 class="entry-title">grid</h1>
+  <div class="entry-content">
+    <div class="nico-iframe">
+<iframe src="iframe-examples-index-1.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="500"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"mod"</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/0.0.1/grid'</span>], <span class="keyword">function</span>($, Grid) {
+
+  <span class="keyword">var</span> fields = [{
+    header: <span class="string">'编号'</span>,
+    name: <span class="string">'id'</span>
+  }, {
+    header: <span class="string">'验票站名称'</span>,
+    name: <span class="string">'stationName'</span>,
+    width: <span class="string">'15%'</span>,
+  }, {
+    header: <span class="string">'矿企名称'</span>,
+    name: <span class="string">'mineName'</span>
+  }, {
+    header: <span class="string">'车牌号'</span>,
+    name: <span class="string">'licensePlateNumber'</span>
+  }, {
+    header: <span class="string">'矿种'</span>,
+    name: <span class="string">'coalType'</span>
+  }, {
+    header: <span class="string">'毛重'</span>,
+    name: <span class="string">'grossWeight'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> <span class="string">'&lt;b&gt;'</span> + value + <span class="string">'吨&lt;/b&gt;'</span>;
+    }
+  }, {
+    header: <span class="string">'过站时间'</span>,
+    name: <span class="string">'transitDate'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> value.split(<span class="string">'T'</span>)[<span class="number">0</span>];
+    }
+  }, {
+    header: <span class="string">'详细信息'</span>,
+    name: <span class="string">'id'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> <span class="string">'&lt;a href="#" data-role="detail"&gt;&lt;img src="./application_view_detail.png" width="16" title="详细信息"&gt;&lt;/a&gt;'</span>;
+    }
+  }];
+
+  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+    element: <span class="string">'#demo1'</span>,
+    title: <span class="string">'title'</span>,
+    url: <span class="string">'./grid_1.json'</span>,
+    fields: fields
+  });
+  grid.on(<span class="string">'click'</span>, <span class="keyword">function</span>(data, cell, row){
+    console.log(data);
+  })
+  grid.urlFormat = <span class="keyword">function</span>(id){
+    <span class="keyword">return</span> <span class="string">'./grid_'</span> + id + <span class="string">'.json'</span>;
+  },
+
+  $(<span class="string">'#demo1'</span>).delegate(<span class="string">'a[data-role=detail]'</span>, <span class="string">'click'</span>, <span class="keyword">function</span>(e) {
+    <span class="keyword">var</span> id = $(e.target).parents(<span class="string">'tr'</span>).attr(<span class="string">'data-id'</span>);
+    console.log(id);
+    <span class="comment">//取消整体的click事件响应</span>
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  });
+
+});
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</code></pre></div>
+  </div>
+</article>
+</div>
+      </div>
+      
+    </div>
+    <div id="footer-wrapper">
+      <footer>
+        <p class="powered">
+        
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
