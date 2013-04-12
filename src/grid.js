@@ -111,8 +111,8 @@ define(function(require, exports, module) {
     },
 
     events: {
-      'click .grid-hd': 'sort',
-      'click .grid-row': 'click',
+      'click .grid-hd': '_sort',
+      'click .grid-row': '_click',
       'click [data-role=prev]': 'prevPage',
       'click [data-role=next]': 'nextPage',
       'click [data-role=first]': 'firstPage',
@@ -121,7 +121,7 @@ define(function(require, exports, module) {
       'keyup [data-role=num]': '_gotoPage'
     },
 
-    sort: function(e) {
+    _sort: function(e) {
       var cell = $(e.target).closest('th');
       var name = cell.attr('data-name');
 
@@ -144,7 +144,7 @@ define(function(require, exports, module) {
       }
     },
 
-    click: function(e) {
+    _click: function(e) {
       var cell = $(e.target);
       var row = cell.parents('tr');
 
@@ -155,27 +155,6 @@ define(function(require, exports, module) {
       this.trigger('click', data, cell, row);
     },
 
-    prevPage: function() {
-      var id = this.data.prevPage;
-      this.gotoPage(id);
-    },
-    nextPage: function() {
-      var id = this.data.nextPage;
-      this.gotoPage(id);
-    },
-    firstPage: function() {
-      var id = this.data.firstPage;
-      this.gotoPage(id);
-    },
-    lastPage: function() {
-      var id = this.data.lastPage;
-      this.gotoPage(id);
-    },
-    refresh: function() {
-      //刷新往往不会改变url
-      var url = this.get('url');
-      this._onRenderUrl(url);
-    },
     _gotoPage: function(e) {
       var $input = $(e.target);
       var value = $input.val();
@@ -199,10 +178,33 @@ define(function(require, exports, module) {
         }
       }
     },
+
+    //public method
     gotoPage: function(id) {
       var r = this.get('urlParser');
       var url = this.get('url').replace(r, '$1' + id + '$2');
       this.set('url', url);
+    },
+    prevPage: function() {
+      var id = this.data.prevPage;
+      this.gotoPage(id);
+    },
+    nextPage: function() {
+      var id = this.data.nextPage;
+      this.gotoPage(id);
+    },
+    firstPage: function() {
+      var id = this.data.firstPage;
+      this.gotoPage(id);
+    },
+    lastPage: function() {
+      var id = this.data.lastPage;
+      this.gotoPage(id);
+    },
+    refresh: function() {
+      //刷新往往不会改变url
+      var url = this.get('url');
+      this._onRenderUrl(url);
     }
 
   });
