@@ -1,12 +1,16 @@
-# grid
+# 基本用法
+
+- order: 1
 
 ---
+
+## 标准grid
 
 ````iframe:300
 <div id="demo1"></div>
 
 <script type="text/javascript">
-seajs.use(['$','grid'], function($, Grid) {
+seajs.use(['$', 'grid'], function($, Grid) {
 
   var fields = [{
     header: '编号',
@@ -21,7 +25,7 @@ seajs.use(['$','grid'], function($, Grid) {
     name: 'mineName'
   }, {
     header: '车牌号',
-    width:80,
+    width: 80,
     name: 'licensePlateNumber'
   }, {
     header: '矿种',
@@ -35,7 +39,7 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '过站时间',
     name: 'transitDate',
-    width:80,
+    width: 80,
     render: function(value) {
       return value.split('T')[0];
     }
@@ -53,13 +57,12 @@ seajs.use(['$','grid'], function($, Grid) {
     title: 'title',
     url: './grid_1.json',
     fields: fields,
-    width:650,
-    height:190
+    height: 190
   });
-  grid.on('click', function(data, cell, row){
+  grid.on('click', function(data, cell, row) {
     console.log(data);
   })
-  grid.urlFormat = function(id){
+  grid.urlFormat = function(id) {
     return './grid_' + id + '.json';
   },
 
@@ -74,43 +77,3 @@ seajs.use(['$','grid'], function($, Grid) {
 </script>
 ````
 
-````iframe:300
-<div id="demo1"></div>
-
-<script type="text/javascript">
-seajs.use(['$','grid'], function($, Grid) {
-
-  var fields = [{
-    header: '编号',
-    align: 'center',
-    name: 'id'
-  }, {
-    header: '验票站名称',
-    name: 'stationName',
-    width: 150
-  }, {
-    header: '矿企名称',
-    name: 'mineName'
-  }, {
-    header: '车牌号',
-    width:80,
-    name: 'licensePlateNumber'
-  }, {
-    header: '矿种',
-    name: 'coalType'
-  }];
-
-  var grid = new Grid({
-    element: '#demo1',
-    title: 'title',
-    url: './grid_1.json',
-    fields: fields,
-    height:190
-  });
-  grid.urlFormat = function(id){
-    return './grid_' + id + '.json';
-  };
-
-});
-</script>
-````

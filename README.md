@@ -47,6 +47,10 @@ render: function(value) {
 }
 ```
 
+### width `Number`
+
+整个grid的宽度，默认扩展到父元素宽度
+
 ### height `Number`
 
 表格内容高度，如果设置height，而显示内容过多，会出现下拉滚动条

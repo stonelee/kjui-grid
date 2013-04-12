@@ -58,10 +58,11 @@ define(function(require, exports, module) {
         };
       });
 
+      var gridHeight = this.get('height');
       var html = handlebars.compile(tpl)({
         width: gridWidth,
         title: this.get('title'),
-        height: this.get('height'),
+        height: gridHeight,
         fields: fields,
         records: records,
         isFirst: function() {
@@ -76,6 +77,11 @@ define(function(require, exports, module) {
         pageSize: data.pageSize
       });
       this.element.html(html);
+
+      if (!gridHeight) {
+        gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
+        this.$('.grid-bd').height(gridHeight);
+      }
 
       this.$('[data-role=num]').val(data.pageNumber);
 
