@@ -2,7 +2,7 @@
 
 ---
 
-Grid 提供了表格展示功能，可以分页，排序
+Grid 提供了表格展示功能，可以分页，点击，排序
 
 ---
 
@@ -11,15 +11,19 @@ Grid 提供了表格展示功能，可以分页，排序
 
 ### title `String`
 
-表格标题，默认为空，表示不显示标题行
+表格标题，默认为空，表示不显示标题栏
 
 ### url `String`
 
 ajax请求数据的路径
 
+### urlParser `RegExp`
+
+用来适配翻页url
+
 ### data `Array`
 
-静态数据，如果没有设置url则使用data中的数据
+直接加载静态数据
 
 ### fields `Array`
 
@@ -39,7 +43,7 @@ render: function(value) {
 
 //显示为一张可点击的图片
 render: function(value) {
-  return '<a href="javascript:void 0;" data-role="detail"><img src="./application_view_detail.png" width="16" title="详细信息"></a>';
+  return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
 }
 ```
 
@@ -49,31 +53,52 @@ render: function(value) {
 
 ### height `Number`
 
-表格内容高度，如果设置height，而显示内容过多，会出现下拉滚动条
+表格内容高度，如果设置height，而显示内容过多，会自动出现下拉滚动条
 
-## 方法
+## 属性
 
-### data
+### data `Array`
 
 返回从url或者data中得到的数据
 
-### load `url`
+## 方法
 
-从指定url处获取数据并加载到grid中
+### gotoPage `id`
+
+加载某页数据
+
+### prevPage ` `
+
+加载上一页数据
+
+### nextPage ` `
+
+加载下一页数据
+
+### firstPage ` `
+
+加载第一页数据
+
+### lastPage ` `
+
+加载最后一页数据
+
+### refresh ` `
+
+刷新数据
 
 ## 事件
 
-### click
+### click `target, data`
 
-在表格中点击触发，参数包括
+在表格行中点击触发
 
+* `target` 被点击的元素，被包装成了jquery对象
 * `data` 该行对应的数据
-* `cell` 被点击的单元格，为jquery对象
-* `row` 被点击的行，为jquery对象
 
-### sort
+### sort `name, direction`
 
-点击列名触发，参数包括
+点击列名触发
 
-* `name` 该列对应的数据key
+* `name` 该列对应的数据key name
 * `direction` 升序还是降序
