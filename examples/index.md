@@ -65,6 +65,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
       console.log(name, direction);
     }
   });
+  grid.render();
   grid.urlFormat = function(id) {
     return './grid_' + id + '.json';
   },

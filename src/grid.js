@@ -16,22 +16,16 @@ define(function(require, exports, module) {
       height: 0
     },
 
-    setup: function() {
-      Grid.superclass.setup.call(this);
-
+    _onRenderUrl: function(url) {
       var self = this;
-      var url = this.get('url');
-      if (url) {
-        $.getJSON(url, function(data) {
-          self._createGrid(data.data);
-        });
-      } else {
-        var data = this.get('data');
-        if (data) {
-          this._createGrid(data);
-        }
-      }
+      $.getJSON(url, function(data) {
+        self._createGrid(data.data);
+      });
     },
+    _onRenderData: function(data) {
+      this._createGrid(data);
+    },
+
     _createGrid: function(data) {
       this.data = data;
 
@@ -177,8 +171,9 @@ define(function(require, exports, module) {
       this.fetch(id);
     },
     refresh: function() {
-      var id = this.data.pageNumber;
-      this.fetch(id);
+      //刷新往往不会改变url
+      var url = this.get('url');
+      this._onRenderUrl(url);
     },
     gotoPage: function(e) {
       var $input = $(e.target);
@@ -206,14 +201,7 @@ define(function(require, exports, module) {
 
     fetch: function(id) {
       var url = this.urlFormat(id);
-      this.load(url);
-    },
-
-    load: function(url) {
-      var self = this;
-      $.getJSON(url, function(data) {
-        self._createGrid(data.data);
-      });
+      this.set('url', url);
     },
 
     urlFormat: function(id) {
