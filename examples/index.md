@@ -2,24 +2,26 @@
 
 ---
 
-````iframe:500
-<div class="mod" id="demo1"></div>
+````iframe:300
+<div id="demo1"></div>
 
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
 
   var fields = [{
     header: '编号',
+    align: 'center',
     name: 'id'
   }, {
     header: '验票站名称',
     name: 'stationName',
-    width: '15%',
+    width: 150
   }, {
     header: '矿企名称',
     name: 'mineName'
   }, {
     header: '车牌号',
+    width:80,
     name: 'licensePlateNumber'
   }, {
     header: '矿种',
@@ -33,14 +35,16 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '过站时间',
     name: 'transitDate',
+    width:80,
     render: function(value) {
       return value.split('T')[0];
     }
   }, {
     header: '详细信息',
     name: 'id',
+    align: 'center',
     render: function(value) {
-      return '<a href="#" data-role="detail"><img src="./application_view_detail.png" width="16" title="详细信息"></a>';
+      return '<a href="javascript:void 0;" data-role="detail"><img src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;"></a>';
     }
   }];
 
@@ -48,7 +52,9 @@ seajs.use(['$','grid'], function($, Grid) {
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
-    fields: fields
+    fields: fields,
+    width:650,
+    height:190
   });
   grid.on('click', function(data, cell, row){
     console.log(data);
@@ -63,6 +69,47 @@ seajs.use(['$','grid'], function($, Grid) {
     //取消整体的click事件响应
     return false;
   });
+
+});
+</script>
+````
+
+````iframe:300
+<div id="demo1"></div>
+
+<script type="text/javascript">
+seajs.use(['$','grid'], function($, Grid) {
+
+  var fields = [{
+    header: '编号',
+    align: 'center',
+    name: 'id'
+  }, {
+    header: '验票站名称',
+    name: 'stationName',
+    width: 150
+  }, {
+    header: '矿企名称',
+    name: 'mineName'
+  }, {
+    header: '车牌号',
+    width:80,
+    name: 'licensePlateNumber'
+  }, {
+    header: '矿种',
+    name: 'coalType'
+  }];
+
+  var grid = new Grid({
+    element: '#demo1',
+    title: 'title',
+    url: './grid_1.json',
+    fields: fields,
+    height:190
+  });
+  grid.urlFormat = function(id){
+    return './grid_' + id + '.json';
+  };
 
 });
 </script>

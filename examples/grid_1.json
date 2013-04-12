@@ -12,7 +12,7 @@
     "totalPages": 2,
     "result": [{
       "SN": "60fe4209-d662-4f98-9546-181e187915a5",
-      "coalType": "<script>console.log('1');</script>",
+      "coalType": "焦粉",
       "driverName": "张三",
       "grossWeight": 31.0,
       "id": 30,
@@ -24,7 +24,7 @@
       "netWeight": 23.0,
       "recordDate": "2012-03-05T00:00:00",
       "stationId": "S4",
-      "stationName": "4验票站",
+      "stationName": "<script>alert('1');</script>",
       "tareWeight": 8.0,
       "transitDate": "2012-09-20T00:00:00"
     }, {

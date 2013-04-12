@@ -8,39 +8,137 @@ define(function(require, exports, module) {
 
   var Grid = Widget.extend({
     attrs: {
-      //行默认高度
-      rowHeight: 23
+      title: '',
+      url: '',
+      data: [],
+      fields: [],
+      width: 0,
+      height: 0
     },
+
+    setup: function() {
+      Grid.superclass.setup.call(this);
+
+      var that = this;
+      var url = this.get('url');
+      if (url) {
+        $.getJSON(url, function(data) {
+          that._createGrid(data.data);
+        });
+      } else {
+        var data = this.get('data');
+        if (data) {
+          this._createGrid(data);
+        }
+      }
+    },
+    _createGrid: function(data) {
+      this.data = data;
+
+      var gridWidth = this.get('width') || this.element.parent().width();
+      var fields = this._processField(gridWidth);
+      var records = $.map(data.result, function(record, index) {
+        return {
+          isAlt: index % 2 === 1,
+          id: record.id,
+          values: $.map(fields, function(field) {
+            var value = record[field.name];
+            value = _.escape(value);
+
+            if ($.isFunction(field.render)) {
+              value = field.render(value);
+            }
+
+            return {
+              width: field.width,
+              align: field.align,
+              value: value
+            };
+          })
+        };
+      });
+
+      var html = handlebars.compile(tpl)({
+        width: gridWidth,
+        title: this.get('title'),
+        height: this.get('height'),
+        fields: fields,
+        records: records,
+        isFirst: function() {
+          return data.pageNumber <= 1;
+        },
+        isLast: function() {
+          return data.totalPages === 0 || data.pageNumber === data.totalPages;
+        },
+        hasPrev: data.hasPrev,
+        hasNext: data.hasNext,
+        totalCount: data.totalCount,
+        pageSize: data.pageSize
+      });
+      this.element.html(html);
+
+      this.$('[data-role=num]').val(data.pageNumber);
+
+      //disabled button will not be clicked
+      this.$('.icon-btn').click(function(e) {
+        if ($(this).hasClass('icon-btn-is-disabled')) {
+          e.stopImmediatePropagation();
+        }
+      });
+    },
+    _processField: function(gridWidth) {
+      var fields = this.get('fields');
+
+      var totalWidth = 0,
+        totalNum = 0;
+      $.each(fields, function() {
+        if (this.width) {
+          totalWidth += this.width;
+          totalNum += 1;
+        }
+      });
+
+      var averageWidth = (gridWidth - fields.length * 9 - totalWidth - 18) / (fields.length - totalNum);
+
+      fields = $.map(fields, function(field) {
+        if (!field.width) {
+          field.width = averageWidth;
+        }
+        return field;
+      });
+      return fields;
+    },
+
     events: {
       'click .grid-hd': 'sort',
       'click .grid-row': 'click',
-      'click :not(.icon-btn-is-disabled)[data-role=prev]': 'prevPage',
-      'click :not(.icon-btn-is-disabled)[data-role=next]': 'nextPage',
-      'click :not(.icon-btn-is-disabled)[data-role=first]': 'firstPage',
-      'click :not(.icon-btn-is-disabled)[data-role=last]': 'lastPage',
+      'click [data-role=prev]': 'prevPage',
+      'click [data-role=next]': 'nextPage',
+      'click [data-role=first]': 'firstPage',
+      'click [data-role=last]': 'lastPage',
       'click [data-role=refresh]': 'refresh',
       'keyup [data-role=num]': 'gotoPage'
     },
 
     sort: function(e) {
-      var cell = $(e.target).closest('td');
+      var cell = $(e.target).closest('th');
       var name = cell.attr('data-name');
 
       //只能按照单独的列排序
-      if (!this.oldSortHeader) {
-        this.oldSortHeader = cell;
+      if (!this._oldSortHeader) {
+        this._oldSortHeader = cell;
       } else {
-        if (this.oldSortHeader.attr('data-name') !== name) {
-          this.oldSortHeader.removeClass('grid-hd-is-desc grid-hd-is-asc');
-          this.oldSortHeader = cell;
+        if (this._oldSortHeader.attr('data-name') !== name) {
+          this._oldSortHeader.removeClass('grid-is-desc grid-is-asc');
+          this._oldSortHeader = cell;
         }
       }
 
-      if (cell.hasClass('grid-hd-is-desc')) {
-        cell.removeClass('grid-hd-is-desc').addClass('grid-hd-is-asc');
+      if (cell.hasClass('grid-is-desc')) {
+        cell.removeClass('grid-is-desc').addClass('grid-is-asc');
         console.log(name, 'asc');
       } else {
-        cell.removeClass('grid-hd-is-asc').addClass('grid-hd-is-desc');
+        cell.removeClass('grid-is-asc').addClass('grid-is-desc');
         console.log(name, 'desc');
       }
     },
@@ -51,7 +149,7 @@ define(function(require, exports, module) {
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
-        return record.id = id;
+        return record.id == id;
       });
       this.trigger('click', data, cell, row);
     },
@@ -110,74 +208,6 @@ define(function(require, exports, module) {
 
     urlFormat: function(id) {
       return id;
-    },
-
-    setup: function() {
-      var that = this;
-
-      Grid.superclass.setup.call(this);
-
-      var url = this.get('url');
-      if (url) {
-        $.getJSON(url, function(data) {
-          that._createGrid(data.data);
-        });
-      } else {
-        //避免向服务端发送请求
-        var data = this.get('data');
-        if (data) {
-          this._createGrid(data);
-        }
-      }
-
-    },
-    _createGrid: function(data) {
-      this.data = data;
-
-      var title = this.get('title');
-      var fields = this.get('fields');
-      var records = $.map(data.result, function(record, index) {
-        return {
-          isAlt: index % 2 === 1,
-          id: record.id,
-          values: $.map(fields, function(field) {
-            var value = record[field.name];
-            value = _.escape(value);
-
-            if ($.isFunction(field.render)) {
-              return field.render(value);
-            } else {
-              return value;
-            }
-          })
-        };
-      });
-
-      var html = handlebars.compile(tpl)({
-        title: title,
-        fields: fields,
-        records: records,
-        isFirst: function() {
-          return data.pageNumber <= 1;
-        },
-        isLast: function() {
-          return data.totalPages === 0 || data.pageNumber === data.totalPages;
-        },
-        hasPrev: data.hasPrev,
-        hasNext: data.hasNext,
-        totalCount: data.totalCount,
-        pageSize: data.pageSize
-      });
-      this.element.html(html);
-
-      this.$('[data-role=num]').val(data.pageNumber);
-
-      this._fixFooterPosition();
-    },
-
-    _fixFooterPosition: function() {
-      var blankHeight = this.get('rowHeight') * (this.data.pageSize - this.data.result.length);
-      this.$('.grid-ft').css('margin-top', blankHeight);
     }
 
   });
