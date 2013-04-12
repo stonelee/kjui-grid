@@ -34,17 +34,15 @@ seajs.use(['$','grid'], function($, Grid) {
     name: 'coalType'
   }];
 
-  var grid = new Grid({
+  new Grid({
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
     fields: fields,
     width: 650,
     height: 190
-  });
-  grid.urlFormat = function(id){
-    return './grid_' + id + '.json';
-  };
+  }).render();
 
 });
 </script>
@@ -80,16 +78,14 @@ seajs.use(['$','grid'], function($, Grid) {
     name: 'coalType'
   }];
 
-  var grid = new Grid({
+  new Grid({
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
     fields: fields,
     height: 190
-  });
-  grid.urlFormat = function(id){
-    return './grid_' + id + '.json';
-  };
+  }).render();
 
 });
 </script>
@@ -125,15 +121,13 @@ seajs.use(['$','grid'], function($, Grid) {
     name: 'coalType'
   }];
 
-  var grid = new Grid({
+  new Grid({
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
     fields: fields
-  });
-  grid.urlFormat = function(id){
-    return './grid_' + id + '.json';
-  };
+  }).render();
 
 });
 </script>
@@ -171,15 +165,13 @@ seajs.use(['$','grid'], function($, Grid) {
     name: 'coalType'
   }];
 
-  var grid = new Grid({
+  new Grid({
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
     fields: fields
-  });
-  grid.urlFormat = function(id){
-    return './grid_' + id + '.json';
-  };
+  }).render();
 
 });
 </script>
