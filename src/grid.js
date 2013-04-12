@@ -19,11 +19,11 @@ define(function(require, exports, module) {
     setup: function() {
       Grid.superclass.setup.call(this);
 
-      var that = this;
+      var self = this;
       var url = this.get('url');
       if (url) {
         $.getJSON(url, function(data) {
-          that._createGrid(data.data);
+          self._createGrid(data.data);
         });
       } else {
         var data = this.get('data');
@@ -142,10 +142,10 @@ define(function(require, exports, module) {
 
       if (cell.hasClass('grid-is-desc')) {
         cell.removeClass('grid-is-desc').addClass('grid-is-asc');
-        console.log(name, 'asc');
+        this.trigger('sort', name, 'asc');
       } else {
         cell.removeClass('grid-is-asc').addClass('grid-is-desc');
-        console.log(name, 'desc');
+        this.trigger('sort', name, 'desc');
       }
     },
 
@@ -205,10 +205,14 @@ define(function(require, exports, module) {
     },
 
     fetch: function(id) {
-      var that = this;
       var url = this.urlFormat(id);
+      this.load(url);
+    },
+
+    load: function(url) {
+      var self = this;
       $.getJSON(url, function(data) {
-        that._createGrid(data.data);
+        self._createGrid(data.data);
       });
     },
 

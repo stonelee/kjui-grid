@@ -57,11 +57,14 @@ seajs.use(['$', 'grid'], function($, Grid) {
     title: 'title',
     url: './grid_1.json',
     fields: fields,
-    height: 190
+    height: 190,
+    onClick: function(data, cell, row) {
+      console.log(data, cell, row);
+    },
+    onSort: function(name, direction) {
+      console.log(name, direction);
+    }
   });
-  grid.on('click', function(data, cell, row) {
-    console.log(data);
-  })
   grid.urlFormat = function(id) {
     return './grid_' + id + '.json';
   },
