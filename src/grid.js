@@ -145,14 +145,14 @@ define(function(require, exports, module) {
     },
 
     _click: function(e) {
-      var cell = $(e.target);
-      var row = cell.parents('tr');
+      var target = $(e.target);
+      var row = target.parents('tr');
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
         return record.id == id;
       });
-      this.trigger('click', data, cell, row);
+      this.trigger('click', target, data);
     },
 
     _gotoPage: function(e) {
