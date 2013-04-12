@@ -10,6 +10,7 @@ define(function(require, exports, module) {
     attrs: {
       title: '',
       url: '',
+      urlParser: null,
       data: [],
       fields: [],
       width: 0,
@@ -117,7 +118,7 @@ define(function(require, exports, module) {
       'click [data-role=first]': 'firstPage',
       'click [data-role=last]': 'lastPage',
       'click [data-role=refresh]': 'refresh',
-      'keyup [data-role=num]': 'gotoPage'
+      'keyup [data-role=num]': '_gotoPage'
     },
 
     sort: function(e) {
@@ -156,31 +157,31 @@ define(function(require, exports, module) {
 
     prevPage: function() {
       var id = this.data.prevPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     nextPage: function() {
       var id = this.data.nextPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     firstPage: function() {
       var id = this.data.firstPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     lastPage: function() {
       var id = this.data.lastPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     refresh: function() {
       //刷新往往不会改变url
       var url = this.get('url');
       this._onRenderUrl(url);
     },
-    gotoPage: function(e) {
+    _gotoPage: function(e) {
       var $input = $(e.target);
       var value = $input.val();
 
       if (value && e.which == 13) {
-        this.fetch(value);
+        this.gotoPage(value);
       } else {
         value = value.replace(/\D/g, '');
         if (value) {
@@ -198,14 +199,10 @@ define(function(require, exports, module) {
         }
       }
     },
-
-    fetch: function(id) {
-      var url = this.urlFormat(id);
+    gotoPage: function(id) {
+      var r = this.get('urlParser');
+      var url = this.get('url').replace(r, '$1' + id + '$2');
       this.set('url', url);
-    },
-
-    urlFormat: function(id) {
-      return id;
     }
 
   });
