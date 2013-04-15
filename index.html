@@ -25,7 +25,7 @@
 <script>
   (function() {
     var data;
-    seajs._package = data = {"name":"grid","version":"0.0.1","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    seajs._package = data = {"name":"grid","version":"1.0.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
     data.dependencies && (delete data.dependencies['$'])
     data.devDependencies && (delete data.devDependencies['$'])
 
@@ -53,7 +53,7 @@
       <h1>
           <a href="./">Grid</a><sup class="package-root"><a href="/">kjui</a></sup>
       </h1>
-        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">0.0.1</a></p>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.0.0</a></p>
         <p class="description">grid</p>
         <ul id="navigation" role="navigation">
           <li><a href="./">文档</a></li>
@@ -64,7 +64,7 @@
 <ul id="module-output"> 
 </ul>
 <div id="output-card">
-    <h3>kjui/grid/0.0.1/<a target="_blank" id="output-file"></a></h3>
+    <h3>kjui/grid/1.0.0/<a target="_blank" id="output-file"></a></h3>
     <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
 </div>
 
@@ -74,17 +74,15 @@
 <article class="hentry">
   <h1 class="entry-title">grid</h1>
   <div class="entry-content">
-    <p>Grid 提供了表格展示功能，可以分页，点击，排序</p>
+    <p>Grid 提供了表格展示功能，可以分页，排序</p>
 
 <hr/>
 <h2 id="%E9%85%8D%E7%BD%AE">配置</h2><h3 id="title-string">title <code>String</code></h3>
-<p>表格标题，默认为空，表示不显示标题栏</p>
+<p>表格标题，默认为空，表示不显示标题行</p>
 <h3 id="url-string">url <code>String</code></h3>
 <p>ajax请求数据的路径</p>
-<h3 id="urlparser-regexp">urlParser <code>RegExp</code></h3>
-<p>用来适配翻页url</p>
 <h3 id="data-array">data <code>Array</code></h3>
-<p>直接加载静态数据</p>
+<p>静态数据，如果没有设置url则使用data中的数据</p>
 <h3 id="fields-array">fields <code>Array</code></h3>
 <p>每列的配置，配置项包括</p>
 
@@ -102,38 +100,29 @@ render: <span class="keyword">function</span>(value) {
 
 <span class="comment">//显示为一张可点击的图片</span>
 render: <span class="keyword">function</span>(value) {
-  <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
+  <span class="keyword">return</span> <span class="string">'&lt;a href="javascript:void 0;" data-role="detail"&gt;&lt;img src="./application_view_detail.png" width="16" title="详细信息"&gt;&lt;/a&gt;'</span>;
 }
 </code></pre></div><h3 id="width-number">width <code>Number</code></h3>
 <p>整个grid的宽度，默认扩展到父元素宽度</p>
 <h3 id="height-number">height <code>Number</code></h3>
-<p>表格内容高度，如果设置height，而显示内容过多，会自动出现下拉滚动条</p>
-<h2 id="%E5%B1%9E%E6%80%A7">属性</h2><h3 id="data-array">data <code>Array</code></h3>
+<p>表格内容高度，如果设置height，而显示内容过多，会出现下拉滚动条</p>
+<h2 id="%E6%96%B9%E6%B3%95">方法</h2><h3 id="data">data</h3>
 <p>返回从url或者data中得到的数据</p>
-<h2 id="%E6%96%B9%E6%B3%95">方法</h2><h3 id="gotopage-id">gotoPage <code>id</code></h3>
-<p>加载某页数据</p>
-<h3 id="prevpage">prevPage <code></code></h3>
-<p>加载上一页数据</p>
-<h3 id="nextpage">nextPage <code></code></h3>
-<p>加载下一页数据</p>
-<h3 id="firstpage">firstPage <code></code></h3>
-<p>加载第一页数据</p>
-<h3 id="lastpage">lastPage <code></code></h3>
-<p>加载最后一页数据</p>
-<h3 id="refresh">refresh <code></code></h3>
-<p>刷新数据</p>
-<h2 id="%E4%BA%8B%E4%BB%B6">事件</h2><h3 id="click-target-data">click <code>target, data</code></h3>
-<p>在表格行中点击触发</p>
+<h3 id="load-url">load <code>url</code></h3>
+<p>从指定url处获取数据并加载到grid中</p>
+<h2 id="%E4%BA%8B%E4%BB%B6">事件</h2><h3 id="click">click</h3>
+<p>在表格中点击触发，参数包括</p>
 
 <ul>
-<li><code>target</code> 被点击的元素，被包装成了jquery对象</li>
 <li><code>data</code> 该行对应的数据</li>
+<li><code>cell</code> 被点击的单元格，为jquery对象</li>
+<li><code>row</code> 被点击的行，为jquery对象</li>
 </ul>
-<h3 id="sort-name-direction">sort <code>name, direction</code></h3>
-<p>点击列名触发</p>
+<h3 id="sort">sort</h3>
+<p>点击列名触发，参数包括</p>
 
 <ul>
-<li><code>name</code> 该列对应的数据key name</li>
+<li><code>name</code> 该列对应的数据key</li>
 <li><code>direction</code> 升序还是降序</li>
 </ul>
 

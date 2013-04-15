@@ -1,4 +1,4 @@
-define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/underscore-debug", "gallery/handlebars/1.0.0/handlebars-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug"], function(require, exports, module) {
+define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/underscore-debug", "gallery/handlebars/1.0.0/handlebars-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug"], function(require, exports, module) {
   var $ = require('$-debug'),
     _ = require('gallery/underscore/1.4.2/underscore-debug'),
     handlebars = require('gallery/handlebars/1.0.0/handlebars-debug'),
@@ -111,8 +111,8 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
     },
 
     events: {
-      'click .grid-hd': '_sort',
-      'click .grid-row': '_click',
+      'click .grid-hd': 'sort',
+      'click .grid-row': 'click',
       'click [data-role=prev]': 'prevPage',
       'click [data-role=next]': 'nextPage',
       'click [data-role=first]': 'firstPage',
@@ -121,7 +121,7 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
       'keyup [data-role=num]': '_gotoPage'
     },
 
-    _sort: function(e) {
+    sort: function(e) {
       var cell = $(e.target).closest('th');
       var name = cell.attr('data-name');
 
@@ -144,17 +144,38 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
       }
     },
 
-    _click: function(e) {
-      var target = $(e.target);
-      var row = target.parents('tr');
+    click: function(e) {
+      var cell = $(e.target);
+      var row = cell.parents('tr');
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
         return record.id == id;
       });
-      this.trigger('click', target, data);
+      this.trigger('click', data, cell, row);
     },
 
+    prevPage: function() {
+      var id = this.data.prevPage;
+      this.gotoPage(id);
+    },
+    nextPage: function() {
+      var id = this.data.nextPage;
+      this.gotoPage(id);
+    },
+    firstPage: function() {
+      var id = this.data.firstPage;
+      this.gotoPage(id);
+    },
+    lastPage: function() {
+      var id = this.data.lastPage;
+      this.gotoPage(id);
+    },
+    refresh: function() {
+      //刷新往往不会改变url
+      var url = this.get('url');
+      this._onRenderUrl(url);
+    },
     _gotoPage: function(e) {
       var $input = $(e.target);
       var value = $input.val();
@@ -178,33 +199,10 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
         }
       }
     },
-
-    //public method
     gotoPage: function(id) {
       var r = this.get('urlParser');
       var url = this.get('url').replace(r, '$1' + id + '$2');
       this.set('url', url);
-    },
-    prevPage: function() {
-      var id = this.data.prevPage;
-      this.gotoPage(id);
-    },
-    nextPage: function() {
-      var id = this.data.nextPage;
-      this.gotoPage(id);
-    },
-    firstPage: function() {
-      var id = this.data.firstPage;
-      this.gotoPage(id);
-    },
-    lastPage: function() {
-      var id = this.data.lastPage;
-      this.gotoPage(id);
-    },
-    refresh: function() {
-      //刷新往往不会改变url
-      var url = this.get('url');
-      this._onRenderUrl(url);
     }
 
   });

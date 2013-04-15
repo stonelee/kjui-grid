@@ -26,7 +26,7 @@
         -webkit-font-smoothing: antialiased;
     }
     </style>
-    <link rel="stylesheet" href="https://rawgithub.com/stonelee/kjui-extui/af686a57b8e690a025c3cb6fdcf936aff0838dc3/dist/all-debug.css" />
+    <link rel="stylesheet" href="http://stonelee.info/kjui/extui/1.0.0/all.css" />
     <script src="http://static.alipayobjects.com/seajs/1.3.1/sea.js"></script>
     <script src="../static/js/arale-helper.js"></script><script type="text/javascript">
   var _gaq = _gaq || [];
@@ -42,7 +42,7 @@
 <script>
   (function() {
     var data;
-    seajs._package = data = {"name":"grid","version":"0.0.1","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    seajs._package = data = {"name":"grid","version":"1.0.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
     data.dependencies && (delete data.dependencies['$'])
     data.devDependencies && (delete data.devDependencies['$'])
 
@@ -102,7 +102,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
     name: 'id',
     align: 'center',
     render: function(value) {
-      return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
+      return '<a href="javascript:void 0;" data-role="detail"><img src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;"></a>';
     }
   }];
 
@@ -113,16 +113,21 @@ seajs.use(['$', 'grid'], function($, Grid) {
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
     height: 190,
-    onClick: function(target, data) {
-      if (target.attr('data-role') == 'detail'){
-        console.log(data);
-      }
+    onClick: function(data, cell, row) {
+      console.log(data, cell, row);
     },
     onSort: function(name, direction) {
       console.log(name, direction);
     }
   });
   grid.render();
+
+  $('#demo1').delegate('a[data-role=detail]', 'click', function(e) {
+    var id = $(e.target).parents('tr').attr('data-id');
+    console.log(id);
+    //取消整体的click事件响应
+    return false;
+  });
 
 });
 </script>
