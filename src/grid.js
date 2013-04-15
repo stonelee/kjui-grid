@@ -86,6 +86,7 @@ define(function(require, exports, module) {
       });
       this.element.html(html);
 
+      //自适应高度
       if (!gridHeight) {
         gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
         this.$('.grid-bd').height(gridHeight);
@@ -166,6 +167,8 @@ define(function(require, exports, module) {
     _click: function(e) {
       var target = $(e.target);
       var row = target.parents('tr');
+
+      row.addClass('grid-row-is-selected').siblings().removeClass('grid-row-is-selected');
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
