@@ -48,7 +48,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
     name: 'id',
     align: 'center',
     render: function(value) {
-      return '<a href="javascript:void 0;" data-role="detail"><img src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;"></a>';
+      return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
     }
   }];
 
@@ -59,21 +59,16 @@ seajs.use(['$', 'grid'], function($, Grid) {
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
     height: 190,
-    onClick: function(data, cell, row) {
-      console.log(data, cell, row);
+    onClick: function(target, data) {
+      if (target.attr('data-role') == 'detail'){
+        console.log(data);
+      }
     },
     onSort: function(name, direction) {
       console.log(name, direction);
     }
   });
   grid.render();
-
-  $('#demo1').delegate('a[data-role=detail]', 'click', function(e) {
-    var id = $(e.target).parents('tr').attr('data-id');
-    console.log(id);
-    //取消整体的click事件响应
-    return false;
-  });
 
 });
 </script>
