@@ -47,6 +47,10 @@ render: function(value) {
 }
 ```
 
+### paginate `Boolean`
+
+默认为false，如果设为true则出现分页栏
+
 ### width `Number`
 
 整个grid的宽度，默认扩展到父元素宽度

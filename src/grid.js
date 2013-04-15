@@ -13,6 +13,7 @@ define(function(require, exports, module) {
       urlParser: null,
       data: [],
       fields: [],
+      paginate: false,
       width: 0,
       height: 0
     },
@@ -60,6 +61,7 @@ define(function(require, exports, module) {
         height: gridHeight,
         fields: fields,
         records: records,
+        paginate: this.get('paginate'),
         isFirst: function() {
           return data.pageNumber <= 1;
         },
