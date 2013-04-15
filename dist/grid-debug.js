@@ -111,8 +111,8 @@ define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
     },
 
     events: {
-      'click .grid-hd': 'sort',
-      'click .grid-row': 'click',
+      'click .grid-hd': '_sort',
+      'click .grid-row': '_click',
       'click [data-role=prev]': 'prevPage',
       'click [data-role=next]': 'nextPage',
       'click [data-role=first]': 'firstPage',
@@ -121,7 +121,7 @@ define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
       'keyup [data-role=num]': '_gotoPage'
     },
 
-    sort: function(e) {
+    _sort: function(e) {
       var cell = $(e.target).closest('th');
       var name = cell.attr('data-name');
 
@@ -144,38 +144,17 @@ define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
       }
     },
 
-    click: function(e) {
-      var cell = $(e.target);
-      var row = cell.parents('tr');
+    _click: function(e) {
+      var target = $(e.target);
+      var row = target.parents('tr');
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
         return record.id == id;
       });
-      this.trigger('click', data, cell, row);
+      this.trigger('click', target, data);
     },
 
-    prevPage: function() {
-      var id = this.data.prevPage;
-      this.gotoPage(id);
-    },
-    nextPage: function() {
-      var id = this.data.nextPage;
-      this.gotoPage(id);
-    },
-    firstPage: function() {
-      var id = this.data.firstPage;
-      this.gotoPage(id);
-    },
-    lastPage: function() {
-      var id = this.data.lastPage;
-      this.gotoPage(id);
-    },
-    refresh: function() {
-      //刷新往往不会改变url
-      var url = this.get('url');
-      this._onRenderUrl(url);
-    },
     _gotoPage: function(e) {
       var $input = $(e.target);
       var value = $input.val();
@@ -199,10 +178,33 @@ define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
         }
       }
     },
+
+    //public method
     gotoPage: function(id) {
       var r = this.get('urlParser');
       var url = this.get('url').replace(r, '$1' + id + '$2');
       this.set('url', url);
+    },
+    prevPage: function() {
+      var id = this.data.prevPage;
+      this.gotoPage(id);
+    },
+    nextPage: function() {
+      var id = this.data.nextPage;
+      this.gotoPage(id);
+    },
+    firstPage: function() {
+      var id = this.data.firstPage;
+      this.gotoPage(id);
+    },
+    lastPage: function() {
+      var id = this.data.lastPage;
+      this.gotoPage(id);
+    },
+    refresh: function() {
+      //刷新往往不会改变url
+      var url = this.get('url');
+      this._onRenderUrl(url);
     }
 
   });

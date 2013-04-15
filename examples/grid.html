@@ -16,11 +16,11 @@
   _gaq.push(['_setAccount', 'UA-36247332-1']);
   _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = 'https://ssl.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  <!--(function() {-->
+    <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
+    <!--ga.src = 'https://ssl.google-analytics.com/ga.js';-->
+    <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
+  <!--})();-->
 </script>
 <script>
   (function() {
@@ -108,17 +108,15 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.0.0
     name: <span class="string">'coalType'</span>
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+  <span class="keyword">new</span> Grid({
     element: <span class="string">'#demo1'</span>,
     title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields,
     width: <span class="number">650</span>,
     height: <span class="number">190</span>
-  });
-  grid.urlFormat = <span class="keyword">function</span>(id){
-    <span class="keyword">return</span> <span class="string">'./grid_'</span> + id + <span class="string">'.json'</span>;
-  };
+  }).render();
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
@@ -151,16 +149,14 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.0.0
     name: <span class="string">'coalType'</span>
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+  <span class="keyword">new</span> Grid({
     element: <span class="string">'#demo1'</span>,
     title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields,
     height: <span class="number">190</span>
-  });
-  grid.urlFormat = <span class="keyword">function</span>(id){
-    <span class="keyword">return</span> <span class="string">'./grid_'</span> + id + <span class="string">'.json'</span>;
-  };
+  }).render();
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
@@ -193,15 +189,13 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.0.0
     name: <span class="string">'coalType'</span>
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+  <span class="keyword">new</span> Grid({
     element: <span class="string">'#demo1'</span>,
     title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields
-  });
-  grid.urlFormat = <span class="keyword">function</span>(id){
-    <span class="keyword">return</span> <span class="string">'./grid_'</span> + id + <span class="string">'.json'</span>;
-  };
+  }).render();
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
@@ -236,15 +230,13 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.0.0
     name: <span class="string">'coalType'</span>
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+  <span class="keyword">new</span> Grid({
     element: <span class="string">'#demo1'</span>,
     title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields
-  });
-  grid.urlFormat = <span class="keyword">function</span>(id){
-    <span class="keyword">return</span> <span class="string">'./grid_'</span> + id + <span class="string">'.json'</span>;
-  };
+  }).render();
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>

@@ -16,11 +16,11 @@
   _gaq.push(['_setAccount', 'UA-36247332-1']);
   _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = 'https://ssl.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  <!--(function() {-->
+    <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
+    <!--ga.src = 'https://ssl.google-analytics.com/ga.js';-->
+    <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
+  <!--})();-->
 </script>
 <script>
   (function() {
@@ -122,7 +122,7 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.0.
     name: <span class="string">'id'</span>,
     align: <span class="string">'center'</span>,
     render: <span class="keyword">function</span>(value) {
-      <span class="keyword">return</span> <span class="string">'&lt;a href="javascript:void 0;" data-role="detail"&gt;&lt;img src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;"&gt;&lt;/a&gt;'</span>;
+      <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
     }
   }];
 
@@ -133,21 +133,16 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.0.
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields,
     height: <span class="number">190</span>,
-    onClick: <span class="keyword">function</span>(data, cell, row) {
-      console.log(data, cell, row);
+    onClick: <span class="keyword">function</span>(target, data) {
+      <span class="keyword">if</span> (target.attr(<span class="string">'data-role'</span>) == <span class="string">'detail'</span>){
+        console.log(data);
+      }
     },
     onSort: <span class="keyword">function</span>(name, direction) {
       console.log(name, direction);
     }
   });
   grid.render();
-
-  $(<span class="string">'#demo1'</span>).delegate(<span class="string">'a[data-role=detail]'</span>, <span class="string">'click'</span>, <span class="keyword">function</span>(e) {
-    <span class="keyword">var</span> id = $(e.target).parents(<span class="string">'tr'</span>).attr(<span class="string">'data-id'</span>);
-    console.log(id);
-    <span class="comment">//取消整体的click事件响应</span>
-    <span class="keyword">return</span> <span class="literal">false</span>;
-  });
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
