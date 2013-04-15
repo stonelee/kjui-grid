@@ -8,6 +8,11 @@
 
     <div class="grid-hd unselectable">
       <table><thead><tr>
+        {{#if needOrder}}
+          <th class="grid-cell" width="{{orderWidth}}">
+            <span></span>
+          </th>
+        {{/if}}
         {{#each fields}}
           <th class="grid-cell" data-name="{{name}}" width="{{width}}">
             <span>{{header}}</span>
@@ -20,6 +25,9 @@
       <table><tbody>
         {{#each records}}
           <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}" data-id="{{id}}">
+            {{#if ../needOrder}}
+              <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}">{{order}}</td>
+            {{/if}}
             {{#each values}}
               <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}>{{{value}}}</td>
             {{/each}}

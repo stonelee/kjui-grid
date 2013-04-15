@@ -14,6 +14,8 @@ define(function(require, exports, module) {
       data: [],
       fields: [],
       paginate: false,
+      needOrder: false,
+      orderWidth: 20,
       width: 0,
       height: 0
     },
@@ -33,10 +35,17 @@ define(function(require, exports, module) {
 
       var gridWidth = this.get('width') || this.element.parent().width();
       var fields = this._processField(gridWidth);
+      var needOrder = this.get('needOrder');
       var records = $.map(data.result, function(record, index) {
+        var order = '';
+        if (needOrder) {
+          order = (data.pageNumber - 1) * data.pageSize + index + 1;
+        }
+
         return {
           isAlt: index % 2 === 1,
           id: record.id,
+          order: order,
           values: $.map(fields, function(field) {
             var value = record[field.name];
             value = _.escape(value);
@@ -62,6 +71,8 @@ define(function(require, exports, module) {
         fields: fields,
         records: records,
         paginate: this.get('paginate'),
+        needOrder: needOrder,
+        orderWidth: this.get('orderWidth'),
         isFirst: function() {
           return data.pageNumber <= 1;
         },
@@ -92,16 +103,22 @@ define(function(require, exports, module) {
     _processField: function(gridWidth) {
       var fields = this.get('fields');
 
-      var totalWidth = 0,
-        totalNum = 0;
+      var specWidth = 0,
+        specNum = 0;
       $.each(fields, function() {
         if (this.width) {
-          totalWidth += this.width;
-          totalNum += 1;
+          specWidth += this.width;
+          specNum += 1;
         }
       });
 
-      var averageWidth = (gridWidth - fields.length * 9 - totalWidth - 18) / (fields.length - totalNum);
+      //padding-width + border-width = 9
+      //滚动条宽度取18
+      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
+      if (this.get('needOrder')) {
+        leftWidth = leftWidth - this.get('orderWidth') - 9;
+      }
+      var averageWidth = leftWidth / (fields.length - specNum);
 
       fields = $.map(fields, function(field) {
         if (!field.width) {

@@ -51,6 +51,14 @@ render: function(value) {
 
 默认为false，如果设为true则出现分页栏
 
+### needOrder `Boolean`
+
+默认为false，如果设为true则出现自动编号列
+
+### orderWidth `Number`
+
+自动编号列的宽度，默认为20
+
 ### width `Number`
 
 整个grid的宽度，默认扩展到父元素宽度
