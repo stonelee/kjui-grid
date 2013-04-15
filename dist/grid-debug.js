@@ -1,47 +1,146 @@
-define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/underscore-debug", "gallery/handlebars/1.0.0/handlebars-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug"], function(require, exports, module) {
+define("kjui/grid/1.0.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/underscore-debug", "gallery/handlebars/1.0.0/handlebars-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug"], function(require, exports, module) {
   var $ = require('$-debug'),
     _ = require('gallery/underscore/1.4.2/underscore-debug'),
     handlebars = require('gallery/handlebars/1.0.0/handlebars-debug'),
     Widget = require('arale/widget/1.0.2/widget-debug');
 
-  var tpl = '{{#if title}} <div class="hd unselectable"> <span class="hd-title">{{title}}</span> </div> {{/if}} <div class="bd" style="background-color:white;"> <table class="grid grid-with-row-lines" border="0" cellspacing="0" cellpadding="0"> <thead class="grid-hd unselectable"> <tr> {{#each fields}} <td class="grid-hd-cell" data-name="{{name}}"{{#if width}} width="{{width}}"{{/if}}> <span>{{header}}</span> </td> {{/each}} </tr> </thead> <tbody> {{#each records}} <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}" data-id="{{id}}"> {{#each values}} <td class="grid-cell">{{{.}}}</td> {{/each}} </tr> {{/each}} </tbody> </table> <div class="toolbar toolbar-ft"> <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i> <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i> <i class="toolbar-separator"></i> <span class="toolbar-text">当前第</span> <input class="form-text" style="width:40px;" type="text" data-role="num"> <span class="toolbar-text">/10页</span> <i class="toolbar-separator"></i> <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i> <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i> <i class="toolbar-separator"></i> <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i> <span class="toolbar-text" style="float:right;margin-right:100px;">共{{totalCount}}条记录，每页{{pageSize}}条</span> </div> </div>';
+  var tpl = '<div class="mod" style="width:{{width}}px;"> {{#if title}} <div class="hd unselectable"> <span class="hd-title">{{title}}</span> </div> {{/if}} <div class="bd"><div class="grid-hd unselectable"> <table><thead><tr> {{#each fields}} <th class="grid-cell" data-name="{{name}}" width="{{width}}"> <span>{{header}}</span> </th> {{/each}} </tr></thead></table> </div><div class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}> <table><tbody> {{#each records}} <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}" data-id="{{id}}"> {{#each values}} <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}>{{{value}}}</td> {{/each}} </tr> {{/each}} </tbody></table> </div><div class="toolbar toolbar-ft"> <span class="toolbar-text toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span> <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i> <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i> <i class="toolbar-separator"></i> <span class="toolbar-text">当前第</span> <input style="width:40px;" type="text" data-role="num"> <span class="toolbar-text">/10页</span> <i class="toolbar-separator"></i> <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i> <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i> <i class="toolbar-separator"></i> <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i> </div> </div> </div>';
 
   var Grid = Widget.extend({
     attrs: {
-      //行默认高度
-      rowHeight: 23
+      title: '',
+      url: '',
+      urlParser: null,
+      data: [],
+      fields: [],
+      width: 0,
+      height: 0
     },
+
+    _onRenderUrl: function(url) {
+      var self = this;
+      $.getJSON(url, function(data) {
+        self._createGrid(data.data);
+      });
+    },
+    _onRenderData: function(data) {
+      this._createGrid(data);
+    },
+
+    _createGrid: function(data) {
+      this.data = data;
+
+      var gridWidth = this.get('width') || this.element.parent().width();
+      var fields = this._processField(gridWidth);
+      var records = $.map(data.result, function(record, index) {
+        return {
+          isAlt: index % 2 === 1,
+          id: record.id,
+          values: $.map(fields, function(field) {
+            var value = record[field.name];
+            value = _.escape(value);
+
+            if ($.isFunction(field.render)) {
+              value = field.render(value);
+            }
+
+            return {
+              width: field.width,
+              align: field.align,
+              value: value
+            };
+          })
+        };
+      });
+
+      var gridHeight = this.get('height');
+      var html = handlebars.compile(tpl)({
+        width: gridWidth,
+        title: this.get('title'),
+        height: gridHeight,
+        fields: fields,
+        records: records,
+        isFirst: function() {
+          return data.pageNumber <= 1;
+        },
+        isLast: function() {
+          return data.totalPages === 0 || data.pageNumber === data.totalPages;
+        },
+        hasPrev: data.hasPrev,
+        hasNext: data.hasNext,
+        totalCount: data.totalCount,
+        pageSize: data.pageSize
+      });
+      this.element.html(html);
+
+      if (!gridHeight) {
+        gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
+        this.$('.grid-bd').height(gridHeight);
+      }
+
+      this.$('[data-role=num]').val(data.pageNumber);
+
+      //disabled button will not be clicked
+      this.$('.icon-btn').click(function(e) {
+        if ($(this).hasClass('icon-btn-is-disabled')) {
+          e.stopImmediatePropagation();
+        }
+      });
+    },
+    _processField: function(gridWidth) {
+      var fields = this.get('fields');
+
+      var totalWidth = 0,
+        totalNum = 0;
+      $.each(fields, function() {
+        if (this.width) {
+          totalWidth += this.width;
+          totalNum += 1;
+        }
+      });
+
+      var averageWidth = (gridWidth - fields.length * 9 - totalWidth - 18) / (fields.length - totalNum);
+
+      fields = $.map(fields, function(field) {
+        if (!field.width) {
+          field.width = averageWidth;
+        }
+        return field;
+      });
+      return fields;
+    },
+
     events: {
       'click .grid-hd': 'sort',
       'click .grid-row': 'click',
-      'click :not(.icon-btn-is-disabled)[data-role=prev]': 'prevPage',
-      'click :not(.icon-btn-is-disabled)[data-role=next]': 'nextPage',
-      'click :not(.icon-btn-is-disabled)[data-role=first]': 'firstPage',
-      'click :not(.icon-btn-is-disabled)[data-role=last]': 'lastPage',
+      'click [data-role=prev]': 'prevPage',
+      'click [data-role=next]': 'nextPage',
+      'click [data-role=first]': 'firstPage',
+      'click [data-role=last]': 'lastPage',
       'click [data-role=refresh]': 'refresh',
-      'keyup [data-role=num]': 'gotoPage'
+      'keyup [data-role=num]': '_gotoPage'
     },
 
     sort: function(e) {
-      var cell = $(e.target).closest('td');
+      var cell = $(e.target).closest('th');
       var name = cell.attr('data-name');
 
       //只能按照单独的列排序
-      if (!this.oldSortHeader) {
-        this.oldSortHeader = cell;
+      if (!this._oldSortHeader) {
+        this._oldSortHeader = cell;
       } else {
-        if (this.oldSortHeader.attr('data-name') !== name) {
-          this.oldSortHeader.removeClass('grid-hd-is-desc grid-hd-is-asc');
-          this.oldSortHeader = cell;
+        if (this._oldSortHeader.attr('data-name') !== name) {
+          this._oldSortHeader.removeClass('grid-is-desc grid-is-asc');
+          this._oldSortHeader = cell;
         }
       }
 
-      if (cell.hasClass('grid-hd-is-desc')) {
-        cell.removeClass('grid-hd-is-desc').addClass('grid-hd-is-asc');
-        console.log(name, 'asc');
+      if (cell.hasClass('grid-is-desc')) {
+        cell.removeClass('grid-is-desc').addClass('grid-is-asc');
+        this.trigger('sort', name, 'asc');
       } else {
-        cell.removeClass('grid-hd-is-asc').addClass('grid-hd-is-desc');
-        console.log(name, 'desc');
+        cell.removeClass('grid-is-asc').addClass('grid-is-desc');
+        this.trigger('sort', name, 'desc');
       }
     },
 
@@ -51,37 +150,38 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
 
       var id = row.attr('data-id');
       var data = _.find(this.data.result, function(record) {
-        return record.id = id;
+        return record.id == id;
       });
       this.trigger('click', data, cell, row);
     },
 
     prevPage: function() {
       var id = this.data.prevPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     nextPage: function() {
       var id = this.data.nextPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     firstPage: function() {
       var id = this.data.firstPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     lastPage: function() {
       var id = this.data.lastPage;
-      this.fetch(id);
+      this.gotoPage(id);
     },
     refresh: function() {
-      var id = this.data.pageNumber;
-      this.fetch(id);
+      //刷新往往不会改变url
+      var url = this.get('url');
+      this._onRenderUrl(url);
     },
-    gotoPage: function(e) {
+    _gotoPage: function(e) {
       var $input = $(e.target);
       var value = $input.val();
 
       if (value && e.which == 13) {
-        this.fetch(value);
+        this.gotoPage(value);
       } else {
         value = value.replace(/\D/g, '');
         if (value) {
@@ -99,85 +199,10 @@ define("kjui/grid/0.0.1/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
         }
       }
     },
-
-    fetch: function(id) {
-      var that = this;
-      var url = this.urlFormat(id);
-      $.getJSON(url, function(data) {
-        that._createGrid(data.data);
-      });
-    },
-
-    urlFormat: function(id) {
-      return id;
-    },
-
-    setup: function() {
-      var that = this;
-
-      Grid.superclass.setup.call(this);
-
-      var url = this.get('url');
-      if (url) {
-        $.getJSON(url, function(data) {
-          that._createGrid(data.data);
-        });
-      } else {
-        //避免向服务端发送请求
-        var data = this.get('data');
-        if (data) {
-          this._createGrid(data);
-        }
-      }
-
-    },
-    _createGrid: function(data) {
-      this.data = data;
-
-      var title = this.get('title');
-      var fields = this.get('fields');
-      var records = $.map(data.result, function(record, index) {
-        return {
-          isAlt: index % 2 === 1,
-          id: record.id,
-          values: $.map(fields, function(field) {
-            var value = record[field.name];
-            value = _.escape(value);
-
-            if ($.isFunction(field.render)) {
-              return field.render(value);
-            } else {
-              return value;
-            }
-          })
-        };
-      });
-
-      var html = handlebars.compile(tpl)({
-        title: title,
-        fields: fields,
-        records: records,
-        isFirst: function() {
-          return data.pageNumber <= 1;
-        },
-        isLast: function() {
-          return data.totalPages === 0 || data.pageNumber === data.totalPages;
-        },
-        hasPrev: data.hasPrev,
-        hasNext: data.hasNext,
-        totalCount: data.totalCount,
-        pageSize: data.pageSize
-      });
-      this.element.html(html);
-
-      this.$('[data-role=num]').val(data.pageNumber);
-
-      this._fixFooterPosition();
-    },
-
-    _fixFooterPosition: function() {
-      var blankHeight = this.get('rowHeight') * (this.data.pageSize - this.data.result.length);
-      this.$('.grid-ft').css('margin-top', blankHeight);
+    gotoPage: function(id) {
+      var r = this.get('urlParser');
+      var url = this.get('url').replace(r, '$1' + id + '$2');
+      this.set('url', url);
     }
 
   });
