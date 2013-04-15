@@ -5,7 +5,7 @@
   ];
 
   var KJUI_MODULES = [
-    'tree','accordion','tab'
+    'accordion', 'date-picker', 'dialog', 'grid', 'tab', 'tree'
   ];
 
   var ALIPAY_BASE = 'http://static.alipayobjects.com/';

@@ -26,8 +26,9 @@
         -webkit-font-smoothing: antialiased;
     }
     </style>
-    <link rel="stylesheet" href="https://rawgithub.com/stonelee/kjui-extui/af686a57b8e690a025c3cb6fdcf936aff0838dc3/dist/all-debug.css" />
-    <script src="http://static.alipayobjects.com/seajs/1.3.1/sea.js"></script>
+    <link rel="stylesheet" href="http://localhost/work/kjui/extui/css/all.css" />
+    <script src="../sea-modules/seajs/1.3.0/sea.js"></script>
+    <script>seajs._nicodebug = true</script>
     <script src="../static/js/arale-helper.js"></script><script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-36247332-1']);
@@ -64,7 +65,9 @@
     <div id="demo1"></div>
 
 <script type="text/javascript">
-seajs.use(['$', 'grid'], function($, Grid) {
+seajs.use(['$','grid'], function($, Grid) {
+  //自适应高度
+  $('#demo1').height(window.innerHeight);
 
   var fields = [{
     header: '编号',
@@ -79,50 +82,22 @@ seajs.use(['$', 'grid'], function($, Grid) {
     name: 'mineName'
   }, {
     header: '车牌号',
-    width: 80,
+    width:80,
     name: 'licensePlateNumber'
   }, {
     header: '矿种',
     name: 'coalType'
-  }, {
-    header: '毛重',
-    name: 'grossWeight',
-    render: function(value) {
-      return '<b>' + value + '吨</b>';
-    }
-  }, {
-    header: '过站时间',
-    name: 'transitDate',
-    width: 80,
-    render: function(value) {
-      return value.split('T')[0];
-    }
-  }, {
-    header: '详细信息',
-    name: 'id',
-    align: 'center',
-    render: function(value) {
-      return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
-    }
   }];
 
   var grid = new Grid({
     element: '#demo1',
     title: 'title',
     url: './grid_1.json',
-    urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190,
-    onClick: function(target, data) {
-      if (target.attr('data-role') == 'detail'){
-        console.log(data);
-      }
-    },
-    onSort: function(name, direction) {
-      console.log(name, direction);
-    }
+    fields: fields
   });
-  grid.render();
+  grid.urlFormat = function(id){
+    return './grid_' + id + '.json';
+  };
 
 });
 </script>

@@ -2,7 +2,7 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8">
-    <title>Grid - 基本用法</title>
+    <title>Grid - 更多测试</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="nico 0.2.4" />
     <link type="image/x-icon" href="../static/css/favicon.ico" rel="icon">
@@ -77,14 +77,20 @@
       <div id="content-wrapper">
         <div id="content">
 <article class="hentry">
-  <h1 class="entry-title">基本用法</h1>
+  <h1 class="entry-title">更多测试</h1>
   <div class="entry-content">
-    <h2 id="%E6%A0%87%E5%87%86grid">标准grid</h2><div class="nico-iframe">
-<iframe src="iframe-examples-index-1.html" allowtransparency="true" 
-frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    <h2 id="%E6%B2%A1%E6%9C%89%E6%A0%87%E9%A2%98%E6%A0%8F">没有标题栏</h2><div class="nico-iframe">
+<iframe src="iframe-examples-test-1.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">type</span>=<span class="value">"text/css"</span>&gt;</span><span class="css">
+  <span class="id">#demo1</span> <span class="class">.bd</span><span class="rules">{
+    <span class="rule"><span class="attribute">border-top-width</span>:<span class="value"><span class="number">1</span>px;</span></span>
+  <span class="rule">}</span></span>
+</span><span class="tag">&lt;/<span class="title">style</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
 
 <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/0.0.1/grid'</span>], <span class="keyword">function</span>($, Grid) {
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/0.0.1/grid'</span>], <span class="keyword">function</span>($, Grid) {
 
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
@@ -99,50 +105,20 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/0.0.
     name: <span class="string">'mineName'</span>
   }, {
     header: <span class="string">'车牌号'</span>,
-    width: <span class="number">80</span>,
+    width:<span class="number">80</span>,
     name: <span class="string">'licensePlateNumber'</span>
   }, {
     header: <span class="string">'矿种'</span>,
     name: <span class="string">'coalType'</span>
-  }, {
-    header: <span class="string">'毛重'</span>,
-    name: <span class="string">'grossWeight'</span>,
-    render: <span class="keyword">function</span>(value) {
-      <span class="keyword">return</span> <span class="string">'&lt;b&gt;'</span> + value + <span class="string">'吨&lt;/b&gt;'</span>;
-    }
-  }, {
-    header: <span class="string">'过站时间'</span>,
-    name: <span class="string">'transitDate'</span>,
-    width: <span class="number">80</span>,
-    render: <span class="keyword">function</span>(value) {
-      <span class="keyword">return</span> value.split(<span class="string">'T'</span>)[<span class="number">0</span>];
-    }
-  }, {
-    header: <span class="string">'详细信息'</span>,
-    name: <span class="string">'id'</span>,
-    align: <span class="string">'center'</span>,
-    render: <span class="keyword">function</span>(value) {
-      <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
-    }
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
+  <span class="keyword">new</span> Grid({
     element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
     fields: fields,
-    height: <span class="number">190</span>,
-    onClick: <span class="keyword">function</span>(target, data) {
-      <span class="keyword">if</span> (target.attr(<span class="string">'data-role'</span>) == <span class="string">'detail'</span>){
-        console.log(data);
-      }
-    },
-    onSort: <span class="keyword">function</span>(name, direction) {
-      console.log(name, direction);
-    }
-  });
-  grid.render();
+    height: <span class="number">190</span>
+  }).render();
 
 });
 </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
