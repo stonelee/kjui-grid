@@ -82,7 +82,10 @@ define(function(require, exports, module) {
         hasPrev: data.hasPrev,
         hasNext: data.hasNext,
         totalCount: data.totalCount,
-        pageSize: data.pageSize
+        pageSize: data.pageSize,
+        pageNumber: function() {
+          return Math.ceil(data.totalCount / data.pageSize);
+        }
       });
       this.element.html(html);
 

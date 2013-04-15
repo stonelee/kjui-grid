@@ -44,7 +44,7 @@
         <i class="toolbar-separator"></i>
         <span class="toolbar-text">当前第</span>
         <input style="width:40px;" type="text" data-role="num">
-        <span class="toolbar-text">/10页</span>
+        <span class="toolbar-text">/{{pageNumber}}页</span>
         <i class="toolbar-separator"></i>
         <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i>
         <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i>
