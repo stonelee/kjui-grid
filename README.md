@@ -51,6 +51,14 @@ render: function(value) {
 
 默认为false，如果设为true则出现分页栏
 
+### needCheckbox `Boolean`
+
+默认为false，如果设为true则出现多选框列
+
+### checkboxWidth `Number`
+
+多选框列的宽度，默认为20
+
 ### needOrder `Boolean`
 
 默认为false，如果设为true则出现自动编号列
@@ -72,6 +80,14 @@ render: function(value) {
 ### data `Array`
 
 返回从url或者data中得到的数据
+
+### selected `Array`
+
+返回当前选中的行，每项都包装为jquery对象
+
+### $tr.data('data') `Array`
+
+返回该行对应的数据
 
 ## 方法
 
@@ -114,3 +130,9 @@ render: function(value) {
 
 * `name` 该列对应的数据key name
 * `direction` 升序还是降序
+
+### rendered `grid`
+
+组件渲染完毕后触发，用来对默认样式进行动态更改
+
+* `grid` 组件实例
