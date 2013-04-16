@@ -24,7 +24,7 @@
     <div class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}>
       <table><tbody>
         {{#each records}}
-          <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}" data-id="{{id}}">
+          <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}">
             {{#if ../needOrder}}
               <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}">{{order}}</td>
             {{/if}}

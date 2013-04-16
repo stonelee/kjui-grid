@@ -4,6 +4,13 @@
     "root": "kjui",
     "description": "grid",
     "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stonelee/kjui-grid.git"
+    },
+    "bugs": {
+        "url": "https://github.com/stonelee/kjui-grid/issues"
+    },
     "dependencies": {
         "$": "$",
         "underscore": "gallery/underscore/1.4.2/underscore",

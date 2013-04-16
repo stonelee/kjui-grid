@@ -44,7 +44,6 @@ define(function(require, exports, module) {
 
         return {
           isAlt: index % 2 === 1,
-          id: record.id,
           order: order,
           values: $.map(fields, function(field) {
             var value = record[field.name];
@@ -88,6 +87,12 @@ define(function(require, exports, module) {
         }
       });
       this.element.html(html);
+
+      //将数据绑定到$row上
+      var $rows = this.$('.grid-row');
+      $.each(data.result, function(index, record) {
+        $rows.eq(index).data('data', record);
+      });
 
       //自适应高度
       if (!gridHeight) {
@@ -169,15 +174,10 @@ define(function(require, exports, module) {
 
     _click: function(e) {
       var target = $(e.target);
-      var row = target.parents('tr');
+      var $row = target.parents('tr');
 
-      row.addClass('grid-row-is-selected').siblings().removeClass('grid-row-is-selected');
-
-      var id = row.attr('data-id');
-      var data = _.find(this.data.result, function(record) {
-        return record.id == id;
-      });
-      this.trigger('click', target, data);
+      $row.addClass('grid-row-is-selected').siblings().removeClass('grid-row-is-selected');
+      this.trigger('click', target, $row.data('data'));
     },
 
     _gotoPage: function(e) {
