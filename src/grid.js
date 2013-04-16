@@ -129,6 +129,8 @@ define(function(require, exports, module) {
           e.stopImmediatePropagation();
         }
       });
+
+      this.trigger('rendered', this);
     },
     _processField: function(gridWidth) {
       var fields = this.get('fields');
@@ -242,9 +244,11 @@ define(function(require, exports, module) {
       var $rows = $checks.parents('tr');
 
       if ($target.prop('checked')) {
-        this.selected = $rows.map(function(index, row) {
-          return $(row);
+        var selected = [];
+        $rows.each(function(index, row) {
+          selected.push($(row));
         });
+        this.selected = selected;
         $checks.prop('checked', true);
         $rows.addClass('grid-row-is-selected');
       } else {
