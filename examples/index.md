@@ -58,7 +58,6 @@ seajs.use(['$', 'grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
     height: 190,
     onClick: function(target, data) {
       if (target.attr('data-role') == 'detail'){

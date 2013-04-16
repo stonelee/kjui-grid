@@ -49,7 +49,7 @@ render: function(value) {
 
 ### paginate `Boolean`
 
-默认为false，如果设为true则出现分页栏
+默认为true，如果设为false则不显示分页栏
 
 ### needCheckbox `Boolean`
 
@@ -81,13 +81,12 @@ render: function(value) {
 
 返回从url或者data中得到的数据
 
-### selected `Array`
+### selected `$tr|Array`
 
-返回当前选中的行，每项都包装为jquery对象
+返回当前选中的行，类型为jquery对象，可以使用 `$tr.data('data')` 得到该行对应的数据
 
-### $tr.data('data') `Array`
-
-返回该行对应的数据
+默认为单选，返回的是jquery对象。
+如果设置needCheckbox则为多选，返回的是数组
 
 ## 方法
 

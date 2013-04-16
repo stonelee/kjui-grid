@@ -15,7 +15,7 @@ define(function(require, exports, module) {
       data: [],
 
       title: '',
-      paginate: false,
+      paginate: true,
 
       needCheckbox: false,
       checkboxWidth: 20,

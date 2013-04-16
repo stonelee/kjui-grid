@@ -50,7 +50,7 @@ seajs.use(['$','grid'], function($, Grid) {
 </script>
 ````
 
-## 有分页栏
+## 没有分页栏
 
 ````iframe:300
 
@@ -85,7 +85,7 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
+    paginate: false,
     height: 190
   }).render();
 
@@ -128,7 +128,6 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
     needOrder: true,
     height: 190
   }).render();
@@ -172,7 +171,6 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
     needCheckbox: true,
     height: 190
   }).render();
@@ -216,7 +214,6 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
     needCheckbox: true,
     needOrder: true,
     height: 190
@@ -261,7 +258,6 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
     needCheckbox: true,
     height: 190,
     onRendered: function(grid){
