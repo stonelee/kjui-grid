@@ -8,10 +8,13 @@
 
     <div class="grid-hd unselectable">
       <table><thead><tr>
-        {{#if needOrder}}
-          <th class="grid-cell" width="{{orderWidth}}">
-            <span></span>
+        {{#if needCheckbox}}
+          <th class="grid-cell" width="{{checkboxWidth}}">
+            <input type="checkbox" data-role="checkAll"/>
           </th>
+        {{/if}}
+        {{#if needOrder}}
+          <th class="grid-cell" width="{{orderWidth}}"></th>
         {{/if}}
         {{#each fields}}
           <th class="grid-cell" data-name="{{name}}" width="{{width}}">
@@ -25,11 +28,20 @@
       <table><tbody>
         {{#each records}}
           <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}">
+            {{#if ../needCheckbox}}
+              <td class="grid-cell grid-mark-cell" width="{{../../checkboxWidth}}">
+                <input type="checkbox" data-role="check"/>
+              </td>
+            {{/if}}
             {{#if ../needOrder}}
-              <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}">{{order}}</td>
+              <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}">
+                {{order}}
+              </td>
             {{/if}}
             {{#each values}}
-              <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}>{{{value}}}</td>
+              <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}>
+                {{{value}}}
+              </td>
             {{/each}}
           </tr>
         {{/each}}
