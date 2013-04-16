@@ -1,59 +1,14 @@
-# 更多测试
+# 不同宽度高度
 
-- order: 3
+- order: 2
 
 ---
 
-## 没有标题栏
+## 固定宽度和高度
+
+适用于grid固定大小的场合
 
 ````iframe:300
-<style type="text/css">
-  #demo1 .bd{
-    border-top-width:1px;
-  }
-</style>
-
-<div id="demo1"></div>
-
-<script type="text/javascript">
-seajs.use(['$','grid'], function($, Grid) {
-
-  var fields = [{
-    header: '编号',
-    align: 'center',
-    name: 'id'
-  }, {
-    header: '验票站名称',
-    name: 'stationName',
-    width: 150
-  }, {
-    header: '矿企名称',
-    name: 'mineName'
-  }, {
-    header: '车牌号',
-    width:80,
-    name: 'licensePlateNumber'
-  }, {
-    header: '矿种',
-    name: 'coalType'
-  }];
-
-  new Grid({
-    element: '#demo1',
-    url: './grid_1.json',
-    urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190
-  }).render();
-
-});
-</script>
-````
-
-## 有分页栏
-
-````iframe:300
-
 <div id="demo1"></div>
 
 <script type="text/javascript">
@@ -85,7 +40,7 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
+    width: 650,
     height: 190
   }).render();
 
@@ -93,10 +48,11 @@ seajs.use(['$','grid'], function($, Grid) {
 </script>
 ````
 
-## 自动序号
+## 不固定宽度，固定高度
+
+grid宽度自动扩展为父元素宽度
 
 ````iframe:300
-
 <div id="demo1"></div>
 
 <script type="text/javascript">
@@ -109,7 +65,7 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '验票站名称',
     name: 'stationName',
-    width: 180
+    width: 150
   }, {
     header: '矿企名称',
     name: 'mineName'
@@ -128,8 +84,6 @@ seajs.use(['$','grid'], function($, Grid) {
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     fields: fields,
-    paginate: true,
-    needOrder: true,
     height: 190
   }).render();
 
@@ -137,10 +91,11 @@ seajs.use(['$','grid'], function($, Grid) {
 </script>
 ````
 
-## 多选
+## 不固定高度
 
-````iframe:300
+此时不会出现内容滚动条，当超出父元素高度时出现整体滚动条
 
+````iframe:500
 <div id="demo1"></div>
 
 <script type="text/javascript">
@@ -153,7 +108,7 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '验票站名称',
     name: 'stationName',
-    width: 180
+    width: 150
   }, {
     header: '矿企名称',
     name: 'mineName'
@@ -171,24 +126,24 @@ seajs.use(['$','grid'], function($, Grid) {
     title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    paginate: true,
-    needCheckbox: true,
-    height: 190
+    fields: fields
   }).render();
 
 });
 </script>
 ````
 
-## 序号+多选
+## 高度自适应
+
+通过计算父元素高度，实现grid高度自适应
 
 ````iframe:300
-
 <div id="demo1"></div>
 
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
+  //自适应高度
+  $('#demo1').height(window.innerHeight);
 
   var fields = [{
     header: '编号',
@@ -197,7 +152,7 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '验票站名称',
     name: 'stationName',
-    width: 180
+    width: 150
   }, {
     header: '矿企名称',
     name: 'mineName'
@@ -215,65 +170,7 @@ seajs.use(['$','grid'], function($, Grid) {
     title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    paginate: true,
-    needCheckbox: true,
-    needOrder: true,
-    height: 190
-  }).render();
-
-});
-</script>
-````
-
-## 自定义按钮
-
-````iframe:300
-
-<div id="demo1"></div>
-
-<script type="text/javascript">
-seajs.use(['$','grid'], function($, Grid) {
-
-  var fields = [{
-    header: '编号',
-    align: 'center',
-    name: 'id'
-  }, {
-    header: '验票站名称',
-    name: 'stationName',
-    width: 180
-  }, {
-    header: '矿企名称',
-    name: 'mineName'
-  }, {
-    header: '车牌号',
-    width:80,
-    name: 'licensePlateNumber'
-  }, {
-    header: '矿种',
-    name: 'coalType'
-  }];
-
-  new Grid({
-    element: '#demo1',
-    title: 'title',
-    url: './grid_1.json',
-    urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    paginate: true,
-    needCheckbox: true,
-    height: 190,
-    onRendered: function(grid){
-      var $ft = grid.$('.toolbar-ft');
-      var $btnSelected = $('<div class="toolbar-btn">').html('已选择').appendTo($ft);
-      $btnSelected.click(function(){
-        var ids = $.map(grid.selected, function($row){
-          return $row.data('data').id
-        })
-        console.log(ids);
-      })
-    }
+    fields: fields
   }).render();
 
 });
