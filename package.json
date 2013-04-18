@@ -13,11 +13,10 @@
     },
     "dependencies": {
         "$": "$",
-        "underscore": "gallery/underscore/1.4.2/underscore",
+        "widget": "arale/widget/1.0.2/widget",
         "handlebars": "gallery/handlebars/1.0.0/handlebars",
-        "widget": "arale/widget/1.0.2/widget"
+        "underscore": "gallery/underscore/1.4.2/underscore"
     },
-    "tests": ["grid"],
     "output": {
         "grid.js": "."
     }

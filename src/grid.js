@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
-  var $ = require('$'),
-    _ = require('underscore'),
+  var $ = require('$-debug'),
+    Widget = require('widget'),
     handlebars = require('handlebars'),
-    Widget = require('widget');
+    _ = require('underscore');
 
   var tpl = require('./grid.tpl');
 
@@ -59,12 +59,9 @@ define(function(require, exports, module) {
             if ($.isFunction(field.render)) {
               value = field.render(value);
             }
-
-            return {
-              width: field.width,
-              align: field.align,
-              value: value
-            };
+            var f = _.clone(field);
+            f.value = value;
+            return f;
           })
         };
       });
@@ -204,10 +201,10 @@ define(function(require, exports, module) {
     _click: function(e) {
       var $target = $(e.target);
       var $row = $target.parents('tr');
+      var data = $row.data('data');
 
       if (!this.get('needCheckbox')) {
-        var id = $row.data('data').id;
-        if (this.selected && this.selected.data('data').id === id) {
+        if (this.selected && this.selected.data('data').id === data.id) {
           this.selected = null;
           $row.removeClass('grid-row-is-selected');
         } else {
@@ -217,7 +214,7 @@ define(function(require, exports, module) {
       }
 
       if ($target.attr('data-role') != 'check') {
-        this.trigger('click', $target, $row.data('data'));
+        this.trigger('click', $target, data);
       }
     },
 
