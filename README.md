@@ -135,3 +135,27 @@ render: function(value) {
 组件渲染完毕后触发，用来对默认样式进行动态更改
 
 * `grid` 组件实例
+
+## $row.data
+
+### data `  `
+
+该行对应的data
+
+## 节点属性
+
+### data-name `th`
+
+该列对应的key
+
+### data-role `input|i`
+
+* 多选框 `check`
+* 位于header的多选框 `checkAll`
+
+* 上一页 `prev`
+* 下一页 `next`
+* 第一页 `first`
+* 最后一页 `last`
+* 刷新 `refresh`
+* input，到某一页 `num`
