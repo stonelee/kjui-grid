@@ -1,8 +1,8 @@
-define("kjui/grid/1.1.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/underscore-debug", "gallery/handlebars/1.0.0/handlebars-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug"], function(require, exports, module) {
+define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "gallery/handlebars/1.0.0/handlebars-debug", "gallery/underscore/1.4.2/underscore-debug"], function(require, exports, module) {
   var $ = require('$-debug'),
-    _ = require('gallery/underscore/1.4.2/underscore-debug'),
+    Widget = require('arale/widget/1.0.2/widget-debug'),
     handlebars = require('gallery/handlebars/1.0.0/handlebars-debug'),
-    Widget = require('arale/widget/1.0.2/widget-debug');
+    _ = require('gallery/underscore/1.4.2/underscore-debug');
 
   var tpl = '<div class="mod" style="width:{{width}}px;"> {{#if title}} <div class="hd unselectable"> <span class="hd-title">{{title}}</span> </div> {{/if}} <div class="bd"><div class="grid-hd unselectable"> <table><thead><tr> {{#if needCheckbox}} <th class="grid-cell" width="{{checkboxWidth}}"> <input type="checkbox" data-role="checkAll"/> </th> {{/if}} {{#if needOrder}} <th class="grid-cell" width="{{orderWidth}}"></th> {{/if}} {{#each fields}} <th class="grid-cell" data-name="{{name}}" width="{{width}}"> <span>{{header}}</span> </th> {{/each}} </tr></thead></table> </div><div class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}> <table><tbody> {{#each records}} <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}"> {{#if ../needCheckbox}} <td class="grid-cell grid-mark-cell" width="{{../../checkboxWidth}}"> <input type="checkbox" data-role="check"/> </td> {{/if}} {{#if ../needOrder}} <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}"> {{order}} </td> {{/if}} {{#each values}} <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}> {{{value}}} </td> {{/each}} </tr> {{/each}} </tbody></table> </div>{{#if paginate}} <div class="toolbar toolbar-ft"> <span class="toolbar-text toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span> <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i> <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i> <i class="toolbar-separator"></i> <span class="toolbar-text">当前第</span> <input style="width:40px;" type="text" data-role="num"> <span class="toolbar-text">/{{pageNumber}}页</span> <i class="toolbar-separator"></i> <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i> <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i> <i class="toolbar-separator"></i> <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i> </div> {{/if}} </div> </div>';
 
@@ -59,12 +59,9 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
             if ($.isFunction(field.render)) {
               value = field.render(value);
             }
-
-            return {
-              width: field.width,
-              align: field.align,
-              value: value
-            };
+            var f = _.clone(field);
+            f.value = value;
+            return f;
           })
         };
       });
@@ -204,10 +201,10 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
     _click: function(e) {
       var $target = $(e.target);
       var $row = $target.parents('tr');
+      var data = $row.data('data');
 
       if (!this.get('needCheckbox')) {
-        var id = $row.data('data').id;
-        if (this.selected && this.selected.data('data').id === id) {
+        if (this.selected && this.selected.data('data').id === data.id) {
           this.selected = null;
           $row.removeClass('grid-row-is-selected');
         } else {
@@ -217,7 +214,7 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "gallery/underscore/1.4.2/under
       }
 
       if ($target.attr('data-role') != 'check') {
-        this.trigger('click', $target, $row.data('data'));
+        this.trigger('click', $target, data);
       }
     },
 

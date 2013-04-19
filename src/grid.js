@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-  var $ = require('$-debug'),
+  var $ = require('$'),
     Widget = require('widget'),
     handlebars = require('handlebars'),
     _ = require('underscore');
