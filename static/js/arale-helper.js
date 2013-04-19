@@ -53,11 +53,11 @@
   seajs.config({
     base: ARALE_BASE,
     alias: {
-      '$': jqueryPath + '/gallery/jquery/1.8.3/jquery.js',
-      '$-debug': jqueryPath + '/gallery/jquery/1.8.3/jquery-debug.js',
+      '$': jqueryPath + '/gallery/jquery/1.7.2/jquery.js',
+      '$-debug': jqueryPath + '/gallery/jquery/1.7.2/jquery-debug.js',
 
-      'jquery': jqueryPath + '/gallery/jquery/1.8.3/jquery',
-      'jquery-debug': jqueryPath + '/gallery/jquery/1.8.3/jquery-debug.js'
+      'jquery': jqueryPath + '/gallery/jquery/1.7.2/jquery',
+      'jquery-debug': jqueryPath + '/gallery/jquery/1.7.2/jquery-debug.js'
     },
     preload: [
       'seajs/plugin-json',
