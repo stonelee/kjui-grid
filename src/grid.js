@@ -1,18 +1,28 @@
 define(function(require, exports, module) {
   var $ = require('$'),
-    _ = require('underscore'),
+    Widget = require('widget'),
     handlebars = require('handlebars'),
-    Widget = require('widget');
+    _ = require('underscore');
 
   var tpl = require('./grid.tpl');
 
   var Grid = Widget.extend({
     attrs: {
-      title: '',
+      fields: [],
+
       url: '',
       urlParser: null,
       data: [],
-      fields: [],
+
+      title: '',
+      paginate: true,
+
+      needCheckbox: false,
+      checkboxWidth: 20,
+
+      needOrder: false,
+      orderWidth: 20,
+
       width: 0,
       height: 0
     },
@@ -32,10 +42,16 @@ define(function(require, exports, module) {
 
       var gridWidth = this.get('width') || this.element.parent().width();
       var fields = this._processField(gridWidth);
+      var needOrder = this.get('needOrder');
       var records = $.map(data.result, function(record, index) {
+        var order = '';
+        if (needOrder) {
+          order = (data.pageNumber - 1) * data.pageSize + index + 1;
+        }
+
         return {
           isAlt: index % 2 === 1,
-          id: record.id,
+          order: order,
           values: $.map(fields, function(field) {
             var value = record[field.name];
             value = _.escape(value);
@@ -43,12 +59,9 @@ define(function(require, exports, module) {
             if ($.isFunction(field.render)) {
               value = field.render(value);
             }
-
-            return {
-              width: field.width,
-              align: field.align,
-              value: value
-            };
+            var f = _.clone(field);
+            f.value = value;
+            return f;
           })
         };
       });
@@ -56,10 +69,20 @@ define(function(require, exports, module) {
       var gridHeight = this.get('height');
       var html = handlebars.compile(tpl)({
         width: gridWidth,
-        title: this.get('title'),
         height: gridHeight,
+
         fields: fields,
         records: records,
+
+        title: this.get('title'),
+        paginate: this.get('paginate'),
+
+        needCheckbox: this.get('needCheckbox'),
+        checkboxWidth: this.get('checkboxWidth'),
+
+        needOrder: needOrder,
+        orderWidth: this.get('orderWidth'),
+
         isFirst: function() {
           return data.pageNumber <= 1;
         },
@@ -69,10 +92,27 @@ define(function(require, exports, module) {
         hasPrev: data.hasPrev,
         hasNext: data.hasNext,
         totalCount: data.totalCount,
-        pageSize: data.pageSize
+        pageSize: data.pageSize,
+        pageNumber: function() {
+          return Math.ceil(data.totalCount / data.pageSize);
+        }
       });
       this.element.html(html);
 
+      //将数据绑定到$row上
+      var $rows = this.$('.grid-row');
+      $.each(data.result, function(index, record) {
+        $rows.eq(index).data('data', record);
+      });
+
+      //已选择的行
+      if (this.get('needCheckbox')) {
+        this.selected = [];
+      } else {
+        this.selected = null;
+      }
+
+      //自适应高度
       if (!gridHeight) {
         gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
         this.$('.grid-bd').height(gridHeight);
@@ -86,20 +126,31 @@ define(function(require, exports, module) {
           e.stopImmediatePropagation();
         }
       });
+
+      this.trigger('rendered', this);
     },
     _processField: function(gridWidth) {
       var fields = this.get('fields');
 
-      var totalWidth = 0,
-        totalNum = 0;
+      var specWidth = 0,
+        specNum = 0;
       $.each(fields, function() {
         if (this.width) {
-          totalWidth += this.width;
-          totalNum += 1;
+          specWidth += this.width;
+          specNum += 1;
         }
       });
 
-      var averageWidth = (gridWidth - fields.length * 9 - totalWidth - 18) / (fields.length - totalNum);
+      //padding-width + border-width = 9
+      //滚动条宽度取18
+      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
+      if (this.get('needCheckbox')) {
+        leftWidth = leftWidth - this.get('checkboxWidth') - 9;
+      }
+      if (this.get('needOrder')) {
+        leftWidth = leftWidth - this.get('orderWidth') - 9;
+      }
+      var averageWidth = leftWidth / (fields.length - specNum);
 
       fields = $.map(fields, function(field) {
         if (!field.width) {
@@ -113,6 +164,9 @@ define(function(require, exports, module) {
     events: {
       'click .grid-hd': '_sort',
       'click .grid-row': '_click',
+      'click [data-role=check]': '_check',
+      'click [data-role=checkAll]': '_checkAll',
+
       'click [data-role=prev]': 'prevPage',
       'click [data-role=next]': 'nextPage',
       'click [data-role=first]': 'firstPage',
@@ -145,14 +199,60 @@ define(function(require, exports, module) {
     },
 
     _click: function(e) {
-      var target = $(e.target);
-      var row = target.parents('tr');
+      var $target = $(e.target);
+      var $row = $target.parents('tr');
+      var data = $row.data('data');
 
-      var id = row.attr('data-id');
-      var data = _.find(this.data.result, function(record) {
-        return record.id == id;
-      });
-      this.trigger('click', target, data);
+      if (!this.get('needCheckbox')) {
+        if (this.selected && this.selected.data('data').id === data.id) {
+          this.selected = null;
+          $row.removeClass('grid-row-is-selected');
+        } else {
+          this.selected = $row;
+          $row.addClass('grid-row-is-selected').siblings().removeClass('grid-row-is-selected');
+        }
+      }
+
+      if ($target.attr('data-role') != 'check') {
+        this.trigger('click', $target, data);
+      }
+    },
+
+    _check: function(e) {
+      var $target = $(e.target);
+      var $row = $target.parents('tr');
+
+      if ($target.prop('checked')) {
+        this.selected.push($row);
+        $row.addClass('grid-row-is-selected');
+      } else {
+        var id = $row.data('data').id;
+        for (var i = this.selected.length - 1; i >= 0; i--) {
+          if (this.selected[i].data('data').id === id) {
+            this.selected.splice(i, 1);
+          }
+        }
+        $row.removeClass('grid-row-is-selected');
+      }
+    },
+    _checkAll: function(e) {
+      var $target = $(e.target);
+      var $checks = this.$('[data-role=check]');
+      var $rows = $checks.parents('tr');
+
+      if ($target.prop('checked')) {
+        var selected = [];
+        $rows.each(function(index, row) {
+          selected.push($(row));
+        });
+        this.selected = selected;
+        $checks.prop('checked', true);
+        $rows.addClass('grid-row-is-selected');
+      } else {
+        this.selected = [];
+        $checks.prop('checked', false);
+        $rows.removeClass('grid-row-is-selected');
+      }
     },
 
     _gotoPage: function(e) {

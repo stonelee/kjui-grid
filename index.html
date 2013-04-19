@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Grid - grid</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="nico 0.2.4" />
+    <meta name="generator" content="nico 0.2.2" />
     <link type="image/x-icon" href="./static/css/favicon.ico" rel="icon">
     <link rel="stylesheet" href="./static/css/normalize.css" />
     <link rel="stylesheet" href="./static/css/site.css" />
@@ -25,7 +25,7 @@
 <script>
   (function() {
     var data;
-    seajs._package = data = {"name":"grid","version":"1.0.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    seajs._package = data = {"name":"grid","version":"1.1.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","repository":{"type":"git","url":"https://github.com/stonelee/kjui-grid.git"},"bugs":{"url":"https://github.com/stonelee/kjui-grid/issues"},"dependencies":{"$":"$","widget":"arale/widget/1.0.2/widget","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.2/underscore"},"output":{"grid.js":"."}}
     data.dependencies && (delete data.dependencies['$'])
     data.devDependencies && (delete data.devDependencies['$'])
 
@@ -53,18 +53,20 @@
       <h1>
           <a href="./">Grid</a><sup class="package-root"><a href="/">kjui</a></sup>
       </h1>
-        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.0.0</a></p>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.1.0</a></p>
         <p class="description">grid</p>
+        <a class="source" href="https://github.com/stonelee/kjui-grid.git" target="_blank">View the Project</a>
         <ul id="navigation" role="navigation">
           <li><a href="./">文档</a></li>
           <li><a href="./examples/">演示</a></li>
+          <li><a class="issue-link" href="https://github.com/stonelee/kjui-grid/issues" target="_blank">讨论</a></li>
         </ul>
         
 
 <ul id="module-output"> 
 </ul>
 <div id="output-card">
-    <h3>kjui/grid/1.0.0/<a target="_blank" id="output-file"></a></h3>
+    <h3>kjui/grid/1.1.0/<a target="_blank" id="output-file"></a></h3>
     <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
 </div>
 
@@ -104,12 +106,27 @@ render: <span class="keyword">function</span>(value) {
 render: <span class="keyword">function</span>(value) {
   <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
 }
-</code></pre></div><h3 id="width-number">width <code>Number</code></h3>
+</code></pre></div><h3 id="paginate-boolean">paginate <code>Boolean</code></h3>
+<p>默认为true，如果设为false则不显示分页栏</p>
+<h3 id="needcheckbox-boolean">needCheckbox <code>Boolean</code></h3>
+<p>默认为false，如果设为true则出现多选框列</p>
+<h3 id="checkboxwidth-number">checkboxWidth <code>Number</code></h3>
+<p>多选框列的宽度，默认为20</p>
+<h3 id="needorder-boolean">needOrder <code>Boolean</code></h3>
+<p>默认为false，如果设为true则出现自动编号列</p>
+<h3 id="orderwidth-number">orderWidth <code>Number</code></h3>
+<p>自动编号列的宽度，默认为20</p>
+<h3 id="width-number">width <code>Number</code></h3>
 <p>整个grid的宽度，默认扩展到父元素宽度</p>
 <h3 id="height-number">height <code>Number</code></h3>
 <p>表格内容高度，如果设置height，而显示内容过多，会自动出现下拉滚动条</p>
 <h2 id="%E5%B1%9E%E6%80%A7">属性</h2><h3 id="data-array">data <code>Array</code></h3>
 <p>返回从url或者data中得到的数据</p>
+<h3 id="selected-tr-array">selected <code>$tr|Array</code></h3>
+<p>返回当前选中的行，类型为jquery对象，可以使用 <code>$tr.data(&#39;data&#39;)</code> 得到该行对应的数据</p>
+
+<p>默认为单选，返回的是jquery对象。
+如果设置needCheckbox则为多选，返回的是数组</p>
 <h2 id="%E6%96%B9%E6%B3%95">方法</h2><h3 id="gotopage-id">gotoPage <code>id</code></h3>
 <p>加载某页数据</p>
 <h3 id="prevpage">prevPage <code></code></h3>
@@ -135,6 +152,27 @@ render: <span class="keyword">function</span>(value) {
 <ul>
 <li><code>name</code> 该列对应的数据key name</li>
 <li><code>direction</code> 升序还是降序</li>
+</ul>
+<h3 id="rendered-grid">rendered <code>grid</code></h3>
+<p>组件渲染完毕后触发，用来对默认样式进行动态更改</p>
+
+<ul>
+<li><code>grid</code> 组件实例</li>
+</ul>
+<h2 id="row-data">$row.data</h2><h3 id="data">data <code></code></h3>
+<p>该行对应的data</p>
+<h2 id="%E8%8A%82%E7%82%B9%E5%B1%9E%E6%80%A7">节点属性</h2><h3 id="data-name-th">data-name <code>th</code></h3>
+<p>该列对应的key</p>
+<h3 id="data-role-input-i">data-role <code>input|i</code></h3>
+<ul>
+<li>多选框 <code>check</code></li>
+<li><p>位于header的多选框 <code>checkAll</code></p></li>
+<li><p>上一页 <code>prev</code></p></li>
+<li><p>下一页 <code>next</code></p></li>
+<li><p>第一页 <code>first</code></p></li>
+<li><p>最后一页 <code>last</code></p></li>
+<li><p>刷新 <code>refresh</code></p></li>
+<li><p>input，到某一页 <code>num</code></p></li>
 </ul>
 
   </div>

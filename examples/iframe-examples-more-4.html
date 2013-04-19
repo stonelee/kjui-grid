@@ -42,7 +42,7 @@
 <script>
   (function() {
     var data;
-    seajs._package = data = {"name":"grid","version":"1.0.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    seajs._package = data = {"name":"grid","version":"1.1.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","repository":{"type":"git","url":"https://github.com/stonelee/kjui-grid.git"},"bugs":{"url":"https://github.com/stonelee/kjui-grid/issues"},"dependencies":{"$":"$","widget":"arale/widget/1.0.2/widget","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.2/underscore"},"output":{"grid.js":"."}}
     data.dependencies && (delete data.dependencies['$'])
     data.devDependencies && (delete data.devDependencies['$'])
 
@@ -61,7 +61,8 @@
 </script>
   </head>
   <body>
-    <div id="demo1"></div>
+    
+<div id="demo1"></div>
 
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
@@ -73,7 +74,7 @@ seajs.use(['$','grid'], function($, Grid) {
   }, {
     header: '验票站名称',
     name: 'stationName',
-    width: 150
+    width: 180
   }, {
     header: '矿企名称',
     name: 'mineName'
@@ -91,7 +92,9 @@ seajs.use(['$','grid'], function($, Grid) {
     title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields
+    fields: fields,
+    needCheckbox: true,
+    height: 190
   }).render();
 
 });

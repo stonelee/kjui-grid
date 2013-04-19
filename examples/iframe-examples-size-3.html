@@ -42,7 +42,7 @@
 <script>
   (function() {
     var data;
-    seajs._package = data = {"name":"grid","version":"1.0.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","dependencies":{"$":"$","underscore":"gallery/underscore/1.4.2/underscore","handlebars":"gallery/handlebars/1.0.0/handlebars","widget":"arale/widget/1.0.2/widget"},"tests":["grid"],"output":{"grid.js":"."}}
+    seajs._package = data = {"name":"grid","version":"1.1.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","repository":{"type":"git","url":"https://github.com/stonelee/kjui-grid.git"},"bugs":{"url":"https://github.com/stonelee/kjui-grid/issues"},"dependencies":{"$":"$","widget":"arale/widget/1.0.2/widget","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.2/underscore"},"output":{"grid.js":"."}}
     data.dependencies && (delete data.dependencies['$'])
     data.devDependencies && (delete data.devDependencies['$'])
 
@@ -61,13 +61,7 @@
 </script>
   </head>
   <body>
-    <style type="text/css">
-  #demo1 .bd{
-    border-top-width:1px;
-  }
-</style>
-
-<div id="demo1"></div>
+    <div id="demo1"></div>
 
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
@@ -94,10 +88,10 @@ seajs.use(['$','grid'], function($, Grid) {
 
   new Grid({
     element: '#demo1',
+    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190
+    fields: fields
   }).render();
 
 });
