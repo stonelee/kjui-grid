@@ -1,23 +1,23 @@
 {
-    "name": "grid",
-    "version": "1.1.0",
-    "root": "kjui",
-    "description": "grid",
-    "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/stonelee/kjui-grid.git"
-    },
-    "bugs": {
-        "url": "https://github.com/stonelee/kjui-grid/issues"
-    },
-    "dependencies": {
-        "$": "$",
-        "widget": "arale/widget/1.0.2/widget",
-        "handlebars": "gallery/handlebars/1.0.0/handlebars",
-        "underscore": "gallery/underscore/1.4.2/underscore"
-    },
-    "output": {
-        "grid.js": "."
-    }
+  "name": "grid",
+  "version": "1.2.0",
+  "root": "kjui",
+  "description": "grid",
+  "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stonelee/kjui-grid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stonelee/kjui-grid/issues"
+  },
+  "dependencies": {
+    "$": "$",
+    "widget": "arale/widget/1.0.2/widget",
+    "templatable": "arale/widget/1.0.4/templatable",
+    "underscore": "gallery/underscore/1.4.2/underscore"
+  },
+  "output": {
+    "grid.js": "."
+  }
 }

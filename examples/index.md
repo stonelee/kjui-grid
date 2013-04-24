@@ -7,7 +7,6 @@
 ## 标准grid
 
 ````iframe:300
-<div id="demo1"></div>
 
 <script type="text/javascript">
 seajs.use(['$', 'grid'], function($, Grid) {
@@ -52,13 +51,14 @@ seajs.use(['$', 'grid'], function($, Grid) {
     }
   }];
 
-  var grid = new Grid({
-    element: '#demo1',
-    title: 'title',
+  new Grid({
+    fields: fields,
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190,
+    model: {
+      title: 'title',
+      height: 190
+    },
     onClick: function(target, data) {
       if (target.attr('data-role') == 'detail'){
         console.log(data);
@@ -67,8 +67,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
     onSort: function(name, direction) {
       console.log(name, direction);
     }
-  });
-  grid.render();
+  }).render();
 
 });
 </script>

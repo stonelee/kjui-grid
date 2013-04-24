@@ -1,19 +1,22 @@
 define(function(require, exports, module) {
   var $ = require('$'),
     Widget = require('widget'),
-    handlebars = require('handlebars'),
+    Templatable = require('templatable'),
     _ = require('underscore');
 
-  var tpl = require('./grid.tpl');
-
   var Grid = Widget.extend({
+    Implements: Templatable,
+
     attrs: {
       fields: [],
-
       url: '',
       urlParser: null,
-      data: [],
+      data: []
+    },
 
+    template: require('./grid.tpl'),
+
+    model: {
       title: '',
       paginate: true,
 
@@ -27,22 +30,83 @@ define(function(require, exports, module) {
       height: 0
     },
 
+    parseElement: function() {
+      var width = this.model.width || $(this.get('parentNode')).innerWidth();
+      this.model.fields = this._processField(width);
+      this.model.width = width;
+      _.defaults(this.model, {
+        records: [],
+        isFirst: true,
+        isLast: true,
+        hasPrev: false,
+        hasNext: false,
+        totalCount: 0,
+        pageSize: 0,
+        pageNumbers: 0
+      });
+
+      Grid.superclass.parseElement.call(this);
+    },
+
+    _processField: function(gridWidth) {
+      var fields = this.get('fields');
+
+      var specWidth = 0,
+        specNum = 0;
+      $.each(fields, function() {
+        if (this.width) {
+          specWidth += this.width;
+          specNum += 1;
+        }
+      });
+
+      //padding-width + border-width = 9
+      //滚动条宽度取18
+      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
+      if (this.model.needCheckbox) {
+        leftWidth = leftWidth - this.model.checkboxWidth - 9;
+      }
+      if (this.model.needOrder) {
+        leftWidth = leftWidth - this.model.orderWidth - 9;
+      }
+      var averageWidth = leftWidth / (fields.length - specNum);
+
+      fields = $.map(fields, function(field) {
+        if (!field.width) {
+          field.width = averageWidth;
+        }
+        return field;
+      });
+      return fields;
+    },
+
+    setup: function() {
+      //自适应高度
+      var gridHeight = this.model.height;
+      if (!gridHeight) {
+        gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
+        this.$('[data-role=bd]').height(gridHeight);
+      }
+
+      //TODO: delete
+      this.trigger('rendered', this);
+    },
+
     _onRenderUrl: function(url) {
       var self = this;
       $.getJSON(url, function(data) {
-        self._createGrid(data.data);
+        self._loadData(data.data);
       });
     },
     _onRenderData: function(data) {
-      this._createGrid(data);
+      this._loadData(data);
     },
 
-    _createGrid: function(data) {
+    _loadData: function(data) {
       this.data = data;
 
-      var gridWidth = this.get('width') || this.element.parent().width();
-      var fields = this._processField(gridWidth);
-      var needOrder = this.get('needOrder');
+      var fields = this.model.fields;
+      var needOrder = this.model.needOrder;
       var records = $.map(data.result, function(record, index) {
         var order = '';
         if (needOrder) {
@@ -66,22 +130,8 @@ define(function(require, exports, module) {
         };
       });
 
-      var gridHeight = this.get('height');
-      var html = handlebars.compile(tpl)({
-        width: gridWidth,
-        height: gridHeight,
-
-        fields: fields,
+      $.extend(this.model, {
         records: records,
-
-        title: this.get('title'),
-        paginate: this.get('paginate'),
-
-        needCheckbox: this.get('needCheckbox'),
-        checkboxWidth: this.get('checkboxWidth'),
-
-        needOrder: needOrder,
-        orderWidth: this.get('orderWidth'),
 
         isFirst: function() {
           return data.pageNumber <= 1;
@@ -93,11 +143,11 @@ define(function(require, exports, module) {
         hasNext: data.hasNext,
         totalCount: data.totalCount,
         pageSize: data.pageSize,
-        pageNumber: function() {
+        pageNumbers: function() {
           return Math.ceil(data.totalCount / data.pageSize);
         }
       });
-      this.element.html(html);
+      this.element.html(this.compile());
 
       //将数据绑定到$row上
       var $rows = this.$('.grid-row');
@@ -106,16 +156,10 @@ define(function(require, exports, module) {
       });
 
       //已选择的行
-      if (this.get('needCheckbox')) {
+      if (this.model.needCheckbox) {
         this.selected = [];
       } else {
         this.selected = null;
-      }
-
-      //自适应高度
-      if (!gridHeight) {
-        gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
-        this.$('.grid-bd').height(gridHeight);
       }
 
       this.$('[data-role=num]').val(data.pageNumber);
@@ -127,42 +171,10 @@ define(function(require, exports, module) {
         }
       });
 
-      this.trigger('rendered', this);
-    },
-    _processField: function(gridWidth) {
-      var fields = this.get('fields');
-
-      var specWidth = 0,
-        specNum = 0;
-      $.each(fields, function() {
-        if (this.width) {
-          specWidth += this.width;
-          specNum += 1;
-        }
-      });
-
-      //padding-width + border-width = 9
-      //滚动条宽度取18
-      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
-      if (this.get('needCheckbox')) {
-        leftWidth = leftWidth - this.get('checkboxWidth') - 9;
-      }
-      if (this.get('needOrder')) {
-        leftWidth = leftWidth - this.get('orderWidth') - 9;
-      }
-      var averageWidth = leftWidth / (fields.length - specNum);
-
-      fields = $.map(fields, function(field) {
-        if (!field.width) {
-          field.width = averageWidth;
-        }
-        return field;
-      });
-      return fields;
     },
 
     events: {
-      'click .grid-hd': '_sort',
+      'click [data-role=hd]': '_sort',
       'click .grid-row': '_click',
       'click [data-role=check]': '_check',
       'click [data-role=checkAll]': '_checkAll',
@@ -203,7 +215,7 @@ define(function(require, exports, module) {
       var $row = $target.parents('tr');
       var data = $row.data('data');
 
-      if (!this.get('needCheckbox')) {
+      if (!this.model.needCheckbox) {
         if (this.selected && this.selected.data('data').id === data.id) {
           this.selected = null;
           $row.removeClass('grid-row-is-selected');
