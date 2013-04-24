@@ -9,8 +9,6 @@
 适用于grid固定大小的场合
 
 ````iframe:300
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
 
@@ -35,13 +33,14 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    width: 650,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      width: 650,
+      height: 190
+    }
   }).render();
 
 });
@@ -53,8 +52,6 @@ seajs.use(['$','grid'], function($, Grid) {
 grid宽度自动扩展为父元素宽度
 
 ````iframe:300
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
 
@@ -79,12 +76,13 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      height: 190
+    }
   }).render();
 
 });
@@ -96,8 +94,6 @@ seajs.use(['$','grid'], function($, Grid) {
 此时不会出现内容滚动条，当超出父元素高度时出现整体滚动条
 
 ````iframe:500
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
 
@@ -122,11 +118,12 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields
+    model: {
+      fields: fields,
+      title: 'title'
+    }
   }).render();
 
 });
@@ -166,11 +163,13 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
+    parentNode: '#demo1',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields
+    model: {
+      fields: fields,
+      title: 'title'
+    }
   }).render();
 
 });

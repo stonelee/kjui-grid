@@ -8,16 +8,13 @@
 
 ````iframe:300
 <style type="text/css">
-  #demo1 .bd{
+  .bd{
     border-top-width:1px;
   }
 </style>
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
-
   var fields = [{
     header: '编号',
     align: 'center',
@@ -39,11 +36,12 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    height: 190
+    model: {
+      fields: fields,
+      height: 190
+    }
   }).render();
 
 });
@@ -54,8 +52,6 @@ seajs.use(['$','grid'], function($, Grid) {
 
 ````iframe:300
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
 
@@ -80,13 +76,14 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    paginate: false,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      paginate: false,
+      height: 190
+    }
   }).render();
 
 });
@@ -97,11 +94,8 @@ seajs.use(['$','grid'], function($, Grid) {
 
 ````iframe:300
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
-
   var fields = [{
     header: '编号',
     align: 'center',
@@ -123,13 +117,14 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    needOrder: true,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      needOrder: true,
+      height: 190
+    }
   }).render();
 
 });
@@ -140,11 +135,8 @@ seajs.use(['$','grid'], function($, Grid) {
 
 ````iframe:300
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
-
   var fields = [{
     header: '编号',
     align: 'center',
@@ -166,13 +158,14 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    needCheckbox: true,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      needCheckbox: true,
+      height: 190
+    }
   }).render();
 
 });
@@ -183,11 +176,8 @@ seajs.use(['$','grid'], function($, Grid) {
 
 ````iframe:300
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
-
   var fields = [{
     header: '编号',
     align: 'center',
@@ -209,14 +199,15 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    needCheckbox: true,
-    needOrder: true,
-    height: 190
+    model: {
+      fields: fields,
+      title: 'title',
+      needCheckbox: true,
+      needOrder: true,
+      height: 190
+    }
   }).render();
 
 });
@@ -227,11 +218,8 @@ seajs.use(['$','grid'], function($, Grid) {
 
 ````iframe:300
 
-<div id="demo1"></div>
-
 <script type="text/javascript">
 seajs.use(['$','grid'], function($, Grid) {
-
   var fields = [{
     header: '编号',
     align: 'center',
@@ -253,18 +241,20 @@ seajs.use(['$','grid'], function($, Grid) {
   }];
 
   new Grid({
-    element: '#demo1',
-    title: 'title',
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
-    fields: fields,
-    needCheckbox: true,
-    height: 190,
-    onRendered: function(grid){
-      var $ft = grid.$('.toolbar-ft');
+    model: {
+      fields: fields,
+      title: 'title',
+      needCheckbox: true,
+      height: 190
+    },
+    onRendered: function(){
+      var self = this;
+      var $ft = this.$('[data-role=ft]');
       var $btnSelected = $('<div class="toolbar-btn">').html('已选择').appendTo($ft);
       $btnSelected.click(function(){
-        var ids = $.map(grid.selected, function($row){
+        var ids = $.map(self.selected, function($row){
           return $row.data('data').id
         })
         console.log(ids);

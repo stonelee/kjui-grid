@@ -82,28 +82,13 @@ define(function(require, exports, module) {
       return fields;
     },
 
-    setup: function() {
-      //自适应高度
-      var gridHeight = this.model.height;
-      if (!gridHeight) {
-        //TODO: body高度不是整个浏览器高度
-        gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
-        this.$('[data-role=bd]').height(gridHeight);
-      }
-
-      //TODO: delete
-      this.trigger('rendered', this);
-    },
-
     _onRenderUrl: function(url) {
       var self = this;
 
       this.loading();
-      setTimeout(function() {
-        $.getJSON(url, function(data) {
-          self._loadData(data.data);
-        });
-      }, 3000);
+      $.getJSON(url, function(data) {
+        self._loadData(data.data);
+      });
     },
 
     _onRenderData: function(data) {
@@ -163,6 +148,13 @@ define(function(require, exports, module) {
         $rows.eq(index).data('data', record);
       });
 
+      //自适应高度
+      var gridHeight = this.model.height;
+      if (!gridHeight) {
+        gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
+        this.$('[data-role=bd]').height(gridHeight);
+      }
+
       //已选择的行
       if (this.model.needCheckbox) {
         this.selected = [];
@@ -179,6 +171,7 @@ define(function(require, exports, module) {
         }
       });
 
+      this.trigger('rendered');
     },
 
     events: {
@@ -327,7 +320,7 @@ define(function(require, exports, module) {
       this._onRenderUrl(url);
     },
 
-    loading:function() {
+    loading: function() {
       return new Loading({
         parentNode: this.$('[data-role=bd]'),
         model: {

@@ -2,16 +2,12 @@
 
 ---
 
-Grid 提供了表格展示功能，可以分页，点击，排序
+提供了表格展示功能，可以分页，点击，排序
 
 ---
 
 
 ## 配置
-
-### title `String`
-
-表格标题，默认为空，表示不显示标题栏
 
 ### url `String`
 
@@ -24,6 +20,8 @@ ajax请求数据的路径
 ### data `Array`
 
 直接加载静态数据
+
+## model
 
 ### fields `Array`
 
@@ -46,6 +44,10 @@ render: function(value) {
   return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
 }
 ```
+
+### title `String`
+
+表格标题，默认为空，表示不显示标题栏
 
 ### paginate `Boolean`
 
@@ -114,6 +116,10 @@ render: function(value) {
 
 刷新数据
 
+### loading ` `
+
+显示loading提示
+
 ## 事件
 
 ### click `target, data`
@@ -130,9 +136,9 @@ render: function(value) {
 * `name` 该列对应的数据key name
 * `direction` 升序还是降序
 
-### rendered `grid`
+### rendered `  `
 
-组件渲染完毕后触发，用来对默认样式进行动态更改
+组件渲染完毕后触发，可以自由更改默认样式
 
 * `grid` 组件实例
 
@@ -159,3 +165,7 @@ render: function(value) {
 * 最后一页 `last`
 * 刷新 `refresh`
 * input，到某一页 `num`
+
+* 标题行 `hd`
+* 内容行 `bd`
+* 分页栏 `ft`
