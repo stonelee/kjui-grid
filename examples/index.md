@@ -52,10 +52,10 @@ seajs.use(['$', 'grid'], function($, Grid) {
   }];
 
   new Grid({
-    fields: fields,
     url: './grid_1.json',
     urlParser: /(grid_)\d+(.*)/,
     model: {
+      fields: fields,
       title: 'title',
       height: 190
     },

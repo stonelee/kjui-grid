@@ -4,11 +4,12 @@ define(function(require, exports, module) {
     Templatable = require('templatable'),
     _ = require('underscore');
 
+  var Loading = require('./loading');
+
   var Grid = Widget.extend({
     Implements: Templatable,
 
     attrs: {
-      fields: [],
       url: '',
       urlParser: null,
       data: []
@@ -17,6 +18,8 @@ define(function(require, exports, module) {
     template: require('./grid.tpl'),
 
     model: {
+      fields: [],
+
       title: '',
       paginate: true,
 
@@ -26,15 +29,13 @@ define(function(require, exports, module) {
       needOrder: false,
       orderWidth: 20,
 
-      width: 0,
-      height: 0
+      width: null,
+      height: null
     },
 
     parseElement: function() {
-      var width = this.model.width || $(this.get('parentNode')).innerWidth();
-      this.model.fields = this._processField(width);
-      this.model.width = width;
       _.defaults(this.model, {
+        width: $(this.get('parentNode')).innerWidth(),
         records: [],
         isFirst: true,
         isLast: true,
@@ -44,12 +45,13 @@ define(function(require, exports, module) {
         pageSize: 0,
         pageNumbers: 0
       });
+      this.model.fields = this._processField();
 
       Grid.superclass.parseElement.call(this);
     },
 
-    _processField: function(gridWidth) {
-      var fields = this.get('fields');
+    _processField: function() {
+      var fields = this.model.fields;
 
       var specWidth = 0,
         specNum = 0;
@@ -62,7 +64,7 @@ define(function(require, exports, module) {
 
       //padding-width + border-width = 9
       //滚动条宽度取18
-      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
+      var leftWidth = this.model.width - fields.length * 9 - specWidth - 18;
       if (this.model.needCheckbox) {
         leftWidth = leftWidth - this.model.checkboxWidth - 9;
       }
@@ -84,6 +86,7 @@ define(function(require, exports, module) {
       //自适应高度
       var gridHeight = this.model.height;
       if (!gridHeight) {
+        //TODO: body高度不是整个浏览器高度
         gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
         this.$('[data-role=bd]').height(gridHeight);
       }
@@ -94,10 +97,15 @@ define(function(require, exports, module) {
 
     _onRenderUrl: function(url) {
       var self = this;
-      $.getJSON(url, function(data) {
-        self._loadData(data.data);
-      });
+
+      this.loading();
+      setTimeout(function() {
+        $.getJSON(url, function(data) {
+          self._loadData(data.data);
+        });
+      }, 3000);
     },
+
     _onRenderData: function(data) {
       this._loadData(data);
     },
@@ -317,6 +325,16 @@ define(function(require, exports, module) {
       //刷新往往不会改变url
       var url = this.get('url');
       this._onRenderUrl(url);
+    },
+
+    loading:function() {
+      return new Loading({
+        parentNode: this.$('[data-role=bd]'),
+        model: {
+          left: (this.model.width - 106) / 2,
+          top: (this.model.height - 36) / 2
+        }
+      }).render();
     }
 
   });
