@@ -1,18 +1,42 @@
-define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "gallery/handlebars/1.0.0/handlebars-debug", "gallery/underscore/1.4.2/underscore-debug"], function(require, exports, module) {
+define("kjui/grid/1.2.0/loading-debug", ["$-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "arale/widget/1.0.4/templatable-debug", "gallery/handlebars/1.0.1/handlebars-debug"], function(require, exports, module) {
   var $ = require('$-debug'),
     Widget = require('arale/widget/1.0.2/widget-debug'),
-    handlebars = require('gallery/handlebars/1.0.0/handlebars-debug'),
+    Templatable = require('arale/widget/1.0.4/templatable-debug');
+
+  var Loading = Widget.extend({
+    Implements: Templatable,
+    template: '<div class="mask"></div> <div class="mask-msg" style="left:{{left}}px;top:{{top}}px;"> <div class="loading">{{content}}</div> </div>',
+    model: {
+      left: 0,
+      top: 0,
+      content: '加载中...'
+    }
+  });
+
+  module.exports = Loading;
+});
+
+define("kjui/grid/1.2.0/grid-debug", ["./loading-debug", "$-debug", "arale/widget/1.0.2/widget-debug", "arale/base/1.0.1/base-debug", "arale/class/1.0.0/class-debug", "arale/events/1.0.0/events-debug", "arale/widget/1.0.4/templatable-debug", "gallery/handlebars/1.0.1/handlebars-debug", "gallery/underscore/1.4.2/underscore-debug"], function(require, exports, module) {
+  var $ = require('$-debug'),
+    Widget = require('arale/widget/1.0.2/widget-debug'),
+    Templatable = require('arale/widget/1.0.4/templatable-debug'),
     _ = require('gallery/underscore/1.4.2/underscore-debug');
 
-  var tpl = '<div class="mod" style="width:{{width}}px;"> {{#if title}} <div class="hd unselectable"> <span class="hd-title">{{title}}</span> </div> {{/if}} <div class="bd"><div class="grid-hd unselectable"> <table><thead><tr> {{#if needCheckbox}} <th class="grid-cell" width="{{checkboxWidth}}"> <input type="checkbox" data-role="checkAll"/> </th> {{/if}} {{#if needOrder}} <th class="grid-cell" width="{{orderWidth}}"></th> {{/if}} {{#each fields}} <th class="grid-cell" data-name="{{name}}" width="{{width}}"> <span>{{header}}</span> </th> {{/each}} </tr></thead></table> </div><div class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}> <table><tbody> {{#each records}} <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}"> {{#if ../needCheckbox}} <td class="grid-cell grid-mark-cell" width="{{../../checkboxWidth}}"> <input type="checkbox" data-role="check"/> </td> {{/if}} {{#if ../needOrder}} <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}"> {{order}} </td> {{/if}} {{#each values}} <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}> {{{value}}} </td> {{/each}} </tr> {{/each}} </tbody></table> </div>{{#if paginate}} <div class="toolbar toolbar-ft"> <span class="toolbar-text toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span> <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i> <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i> <i class="toolbar-separator"></i> <span class="toolbar-text">当前第</span> <input style="width:40px;" type="text" data-role="num"> <span class="toolbar-text">/{{pageNumber}}页</span> <i class="toolbar-separator"></i> <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i> <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i> <i class="toolbar-separator"></i> <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i> </div> {{/if}} </div> </div>';
+  var Loading = require('./loading-debug');
 
   var Grid = Widget.extend({
-    attrs: {
-      fields: [],
+    Implements: Templatable,
 
+    attrs: {
       url: '',
       urlParser: null,
-      data: [],
+      data: []
+    },
+
+    template: '<div class="mod" style="width:{{width}}px;"> {{#if title}} <div class="hd unselectable"> <span class="hd-title">{{title}}</span> </div> {{/if}} <div class="bd"><div data-role="hd" class="grid-hd unselectable"> <table><thead><tr> {{#if needCheckbox}} <th class="grid-cell" width="{{checkboxWidth}}"> <input type="checkbox" data-role="checkAll"/> </th> {{/if}} {{#if needOrder}} <th class="grid-cell" width="{{orderWidth}}"></th> {{/if}} {{#each fields}} <th class="grid-cell" data-name="{{name}}" width="{{width}}"> <span>{{header}}</span> </th> {{/each}} </tr></thead></table> </div><div data-role="bd" class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}> <table><tbody> {{#each records}} <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}"> {{#if ../needCheckbox}} <td class="grid-cell grid-mark-cell" width="{{../../checkboxWidth}}"> <input type="checkbox" data-role="check"/> </td> {{/if}} {{#if ../needOrder}} <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}"> {{order}} </td> {{/if}} {{#each values}} <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}> {{{value}}} </td> {{/each}} </tr> {{/each}} </tbody></table> </div>{{#if paginate}} <div data-role="ft" class="toolbar toolbar-ft"> <span class="toolbar-text toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span> <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i> <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i> <i class="toolbar-separator"></i> <span class="toolbar-text">当前第</span> <input style="width:40px;" type="text" data-role="num"> <span class="toolbar-text">/{{pageNumbers}}页</span> <i class="toolbar-separator"></i> <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i> <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i> <i class="toolbar-separator"></i> <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i> </div> {{/if}} </div> </div>',
+
+    model: {
+      fields: [],
 
       title: '',
       paginate: true,
@@ -23,26 +47,77 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
       needOrder: false,
       orderWidth: 20,
 
-      width: 0,
-      height: 0
+      width: null,
+      height: null
+    },
+
+    parseElement: function() {
+      _.defaults(this.model, {
+        width: $(this.get('parentNode')).innerWidth(),
+        records: [],
+        isFirst: true,
+        isLast: true,
+        hasPrev: false,
+        hasNext: false,
+        totalCount: 0,
+        pageSize: 0,
+        pageNumbers: 0
+      });
+      this.model.fields = this._processField();
+
+      Grid.superclass.parseElement.call(this);
+    },
+
+    _processField: function() {
+      var fields = this.model.fields;
+
+      var specWidth = 0,
+        specNum = 0;
+      $.each(fields, function() {
+        if (this.width) {
+          specWidth += this.width;
+          specNum += 1;
+        }
+      });
+
+      //padding-width + border-width = 9
+      //滚动条宽度取18
+      var leftWidth = this.model.width - fields.length * 9 - specWidth - 18;
+      if (this.model.needCheckbox) {
+        leftWidth = leftWidth - this.model.checkboxWidth - 9;
+      }
+      if (this.model.needOrder) {
+        leftWidth = leftWidth - this.model.orderWidth - 9;
+      }
+      var averageWidth = leftWidth / (fields.length - specNum);
+
+      fields = $.map(fields, function(field) {
+        if (!field.width) {
+          field.width = averageWidth;
+        }
+        return field;
+      });
+      return fields;
     },
 
     _onRenderUrl: function(url) {
       var self = this;
+
+      this.loading();
       $.getJSON(url, function(data) {
-        self._createGrid(data.data);
+        self._loadData(data.data);
       });
     },
+
     _onRenderData: function(data) {
-      this._createGrid(data);
+      this._loadData(data);
     },
 
-    _createGrid: function(data) {
+    _loadData: function(data) {
       this.data = data;
 
-      var gridWidth = this.get('width') || this.element.parent().width();
-      var fields = this._processField(gridWidth);
-      var needOrder = this.get('needOrder');
+      var fields = this.model.fields;
+      var needOrder = this.model.needOrder;
       var records = $.map(data.result, function(record, index) {
         var order = '';
         if (needOrder) {
@@ -66,22 +141,8 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
         };
       });
 
-      var gridHeight = this.get('height');
-      var html = handlebars.compile(tpl)({
-        width: gridWidth,
-        height: gridHeight,
-
-        fields: fields,
+      $.extend(this.model, {
         records: records,
-
-        title: this.get('title'),
-        paginate: this.get('paginate'),
-
-        needCheckbox: this.get('needCheckbox'),
-        checkboxWidth: this.get('checkboxWidth'),
-
-        needOrder: needOrder,
-        orderWidth: this.get('orderWidth'),
 
         isFirst: function() {
           return data.pageNumber <= 1;
@@ -93,11 +154,11 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
         hasNext: data.hasNext,
         totalCount: data.totalCount,
         pageSize: data.pageSize,
-        pageNumber: function() {
+        pageNumbers: function() {
           return Math.ceil(data.totalCount / data.pageSize);
         }
       });
-      this.element.html(html);
+      this.element.html(this.compile());
 
       //将数据绑定到$row上
       var $rows = this.$('.grid-row');
@@ -105,17 +166,18 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
         $rows.eq(index).data('data', record);
       });
 
+      //自适应高度
+      var gridHeight = this.model.height;
+      if (!gridHeight) {
+        gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
+        this.$('[data-role=bd]').height(gridHeight);
+      }
+
       //已选择的行
-      if (this.get('needCheckbox')) {
+      if (this.model.needCheckbox) {
         this.selected = [];
       } else {
         this.selected = null;
-      }
-
-      //自适应高度
-      if (!gridHeight) {
-        gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
-        this.$('.grid-bd').height(gridHeight);
       }
 
       this.$('[data-role=num]').val(data.pageNumber);
@@ -127,42 +189,11 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
         }
       });
 
-      this.trigger('rendered', this);
-    },
-    _processField: function(gridWidth) {
-      var fields = this.get('fields');
-
-      var specWidth = 0,
-        specNum = 0;
-      $.each(fields, function() {
-        if (this.width) {
-          specWidth += this.width;
-          specNum += 1;
-        }
-      });
-
-      //padding-width + border-width = 9
-      //滚动条宽度取18
-      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
-      if (this.get('needCheckbox')) {
-        leftWidth = leftWidth - this.get('checkboxWidth') - 9;
-      }
-      if (this.get('needOrder')) {
-        leftWidth = leftWidth - this.get('orderWidth') - 9;
-      }
-      var averageWidth = leftWidth / (fields.length - specNum);
-
-      fields = $.map(fields, function(field) {
-        if (!field.width) {
-          field.width = averageWidth;
-        }
-        return field;
-      });
-      return fields;
+      this.trigger('rendered');
     },
 
     events: {
-      'click .grid-hd': '_sort',
+      'click [data-role=hd]': '_sort',
       'click .grid-row': '_click',
       'click [data-role=check]': '_check',
       'click [data-role=checkAll]': '_checkAll',
@@ -203,7 +234,7 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
       var $row = $target.parents('tr');
       var data = $row.data('data');
 
-      if (!this.get('needCheckbox')) {
+      if (!this.model.needCheckbox) {
         if (this.selected && this.selected.data('data').id === data.id) {
           this.selected = null;
           $row.removeClass('grid-row-is-selected');
@@ -305,6 +336,16 @@ define("kjui/grid/1.1.0/grid-debug", ["$-debug", "arale/widget/1.0.2/widget-debu
       //刷新往往不会改变url
       var url = this.get('url');
       this._onRenderUrl(url);
+    },
+
+    loading: function() {
+      return new Loading({
+        parentNode: this.$('[data-role=bd]'),
+        model: {
+          left: (this.model.width - 106) / 2,
+          top: (this.model.height - 36) / 2
+        }
+      }).render();
     }
 
   });
