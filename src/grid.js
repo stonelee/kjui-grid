@@ -165,6 +165,11 @@ define(function(require, exports, module) {
         var trs = '<tr>' + extraTd;
 
         var tpl = require('./headerTd.tpl');
+        Handlebars.registerHelper('addSortClass', function(sort) {
+          if (sort == 'asc' || sort == 'desc') {
+            return new Handlebars.SafeString(' grid-is-' + sort);
+          }
+        });
         var td = Handlebars.compile(tpl)({
           headers: this.headers[0]
         });
@@ -299,7 +304,9 @@ define(function(require, exports, module) {
     },
 
     _sort: function(e) {
-      var cell = $(e.target).closest('th');
+      var cell = $(e.target).closest('td');
+      if (!cell[0].hasAttribute('data-sortable')) return;
+
       var name = cell.attr('data-name');
 
       //只能按照单独的列排序

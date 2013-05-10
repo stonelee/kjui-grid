@@ -13,8 +13,9 @@ seajs.use(['$', 'grid'], function($, Grid) {
 
   var fields = [{
     header: '编号',
+    name: 'id',
     align: 'center',
-    name: 'id'
+    sort: true
   }, {
     header: '验票站名称',
     name: 'stationName',
@@ -24,8 +25,8 @@ seajs.use(['$', 'grid'], function($, Grid) {
     name: 'mineName'
   }, {
     header: '车牌号',
-    width: 80,
-    name: 'licensePlateNumber'
+    name: 'licensePlateNumber',
+    width: 80
   }, {
     header: '矿种',
     name: 'coalType'
@@ -39,6 +40,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
     header: '过站时间',
     name: 'transitDate',
     width: 80,
+    sort: 'desc',
     render: function(value) {
       return value.split('T')[0];
     }
@@ -65,7 +67,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
       }
     },
     onSort: function(name, direction) {
-      console.log(name, direction);
+      alert(name + ' ' + direction);
     }
   }).render();
 
@@ -82,8 +84,8 @@ seajs.use(['$', 'grid'], function($, Grid) {
 
   var fields = [{
     header: '编号',
-    align: 'center',
-    name: 'id'
+    name: 'id',
+    align: 'center'
   }, {
     header: '验票站名称',
     name: 'stationName',
@@ -93,8 +95,8 @@ seajs.use(['$', 'grid'], function($, Grid) {
     name: 'mineName'
   }, {
     header: '车牌号',
-    width: 80,
-    name: 'licensePlateNumber'
+    name: 'licensePlateNumber',
+    width: 80
   }, {
     header: '货物信息',
     children: [{
@@ -130,14 +132,6 @@ seajs.use(['$', 'grid'], function($, Grid) {
       fields: fields,
       title: 'title',
       height: 190
-    },
-    onClick: function(target, data) {
-      if (target.attr('data-role') == 'detail'){
-        console.log(data);
-      }
-    },
-    onSort: function(name, direction) {
-      console.log(name, direction);
     }
   }).render();
 
@@ -213,14 +207,6 @@ seajs.use(['$', 'grid'], function($, Grid) {
       fields: fields,
       title: 'title',
       height: 190
-    },
-    onClick: function(target, data) {
-      if (target.attr('data-role') == 'detail'){
-        console.log(data);
-      }
-    },
-    onSort: function(name, direction) {
-      console.log(name, direction);
     }
   }).render();
 
