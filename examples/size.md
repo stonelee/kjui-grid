@@ -142,6 +142,8 @@ seajs.use(['$','grid'], function($, Grid) {
   //自适应高度
   $('#demo1').height(window.innerHeight);
 
+  height = $('#demo1').innerHeight() - 79;
+
   var fields = [{
     header: '编号',
     align: 'center',
@@ -168,7 +170,8 @@ seajs.use(['$','grid'], function($, Grid) {
     urlParser: /(grid_)\d+(.*)/,
     model: {
       fields: fields,
-      title: 'title'
+      title: 'title',
+      height: height
     }
   }).render();
 

@@ -155,6 +155,7 @@ seajs.use(['$', 'grid'], function($, Grid) {
   var fields = [{
     header: '编号',
     name: 'id',
+    width: 80,
     align: 'center'
   }, {
     header: '名称',
@@ -164,22 +165,25 @@ seajs.use(['$', 'grid'], function($, Grid) {
       width: 150
     }, {
       header: '矿企名称',
-      name: 'mineName'
+      name: 'mineName',
+      width: 100
     }]
   }, {
     header: '信息',
     children: [{
       header: '车牌号',
       name: 'licensePlateNumber',
-      width: 80
+      width: 180
     }, {
       header: '货物信息',
       children: [{
         header: '矿种',
-        name: 'coalType'
+        name: 'coalType',
+        width: 80
       }, {
         header: '毛重',
         name: 'grossWeight',
+        width: 80,
         render: function(value) {
           return '<b>' + value + '吨</b>';
         }
@@ -188,13 +192,14 @@ seajs.use(['$', 'grid'], function($, Grid) {
   }, {
     header: '过站时间',
     name: 'transitDate',
-    width: 80,
+    width: 200,
     render: function(value) {
       return value.split('T')[0];
     }
   }, {
     header: '详细信息',
     name: 'id',
+    width: 200,
     align: 'center',
     render: function(value) {
       return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';

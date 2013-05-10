@@ -251,7 +251,7 @@ seajs.use(['$','grid'], function($, Grid) {
     },
     onLoaded: function(){
       var self = this;
-      var $ft = this.$('[data-role=ft]');
+      var $ft = this.$('.toolbar-ft');
       var $btnSelected = $('<div class="toolbar-btn">').html('已选择').appendTo($ft);
       $btnSelected.click(function(){
         var ids = $.map(self.selected, function($row){

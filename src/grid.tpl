@@ -6,7 +6,7 @@
   {{/if}}
   <div class="bd">
 
-    <div data-role="hd" class="grid-hd unselectable">
+    <div class="grid-hd unselectable">
       <table>
         <thead>
           <tr>
@@ -29,28 +29,30 @@
       </table>
     </div>
 
-    <div data-role="bd" class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}>
-      <table>
-        <thead>
-          <tr>
-            {{#if needCheckbox}}
-              <th style="width:{{checkboxWidth}}px;"></th>
-            {{/if}}
-            {{#if needOrder}}
-              <th style="width:{{orderWidth}}px;"></th>
-            {{/if}}
-            {{#each fields}}
-              <th style="width:{{width}}px;"></th>
-            {{/each}}
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="grid-bd" style="height:{{height}}px;">
+      <div class="grid-view"{{#unless isLong}} style="_overflow-x:hidden;"{{/unless}}>
+        <table>
+          <thead>
+            <tr>
+              {{#if needCheckbox}}
+                <th style="width:{{checkboxWidth}}px;"></th>
+              {{/if}}
+              {{#if needOrder}}
+                <th style="width:{{orderWidth}}px;"></th>
+              {{/if}}
+              {{#each fields}}
+                <th style="width:{{width}}px;"></th>
+              {{/each}}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     {{#if paginate}}
-      <div data-role="ft" class="toolbar-ft">
+      <div class="toolbar-ft">
         <span class="toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span>
         <i class="{{#if isFirst}}icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i>
         <i class="{{#if hasPrev}}icon-grid-page-prev{{else}}icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i>

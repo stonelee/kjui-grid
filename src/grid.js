@@ -113,23 +113,30 @@ define(function(require, exports, module) {
 
       function loopHeader(nodes) {
         $.each(nodes, function() {
-          if (this.width) {
-            specWidth += this.width;
-            specNum += 1;
-          }
           if (this.children && this.children.length > 0) {
             loopHeader(this.children);
           } else {
             fields.push(this);
+            //子表头宽度有效
+            if (this.width) {
+              specWidth += this.width;
+              specNum += 1;
+            }
           }
         });
       }
       loopHeader(this.model.fields);
 
+      //滚动条宽度
+      var scrollWidth = 18;
+      //过长表格
+      if (specNum === fields.length && specWidth > this.model.width) {
+        this.model.isLong = true;
+        scrollWidth = 0;
+      }
+
       //如果没有设置width则平均分配宽度
-      //滚动条宽度取18
-      //TODO: 过长不用-18
-      var remainWidth = this.model.width - specWidth - 18;
+      var remainWidth = this.model.width - specWidth - scrollWidth;
       if (this.model.needCheckbox) {
         remainWidth = remainWidth - this.model.checkboxWidth;
       }
@@ -173,6 +180,15 @@ define(function(require, exports, module) {
         }
 
         return new Handlebars.SafeString(trs);
+      }
+    },
+
+    setup: function() {
+      var self = this;
+      if (this.model.isLong) {
+        this.$('.grid-view').scroll(function() {
+          self.$('.grid-hd').scrollLeft($(this).scrollLeft());
+        });
       }
     },
 
@@ -221,7 +237,7 @@ define(function(require, exports, module) {
       var body = Handlebars.compile(require('./body.tpl'))($.extend({}, this.model, {
         records: records
       }));
-      this.$('[data-role=bd] tbody').html(body);
+      this.$('.grid-view tbody').html(body);
 
 
       //paginate
@@ -240,20 +256,13 @@ define(function(require, exports, module) {
           return Math.ceil(data.totalCount / data.pageSize);
         }
       });
-      this.renderPartial('[data-role=ft]');
+      this.renderPartial('.toolbar-ft');
 
       //将数据绑定到$row上
       var $rows = this.$('.grid-row');
       $.each(data.result, function(index, record) {
         $rows.eq(index).data('data', record);
       });
-
-      //自适应高度
-      var gridHeight = this.model.height;
-      if (!gridHeight) {
-        gridHeight = $(this.get('parentNode')).innerHeight() - this.$('[data-role=bd]').position().top - this.$('[data-role=ft]').outerHeight() - 1;
-        this.$('[data-role=bd]').height(gridHeight);
-      }
 
       //已选择的行
       if (this.model.needCheckbox) {
@@ -273,11 +282,10 @@ define(function(require, exports, module) {
       });
 
       this.trigger('loaded');
-
     },
 
     events: {
-      'click [data-role=hd]': '_sort',
+      'click .grid-hd': '_sort',
       'click .grid-row': '_click',
       'click [data-role=check]': '_check',
       'click [data-role=checkAll]': '_checkAll',
@@ -423,16 +431,20 @@ define(function(require, exports, module) {
     },
 
     showLoading: function() {
-      this.loading =  new Loading({
-        parentNode: this.$('[data-role=bd]'),
-        model: {
-          left: (this.model.width - 106) / 2,
-          top: (this.model.height - 36) / 2
-        }
-      }).render();
+      if (this.loading) {
+        this.loading.element.show();
+      } else {
+        this.loading = new Loading({
+          parentNode: this.$('.grid-bd'),
+          model: {
+            left: (this.model.width - 106) / 2,
+            top: (this.model.height - 36) / 2
+          }
+        }).render();
+      }
     },
     hideLoading: function() {
-      this.loading.element.remove();
+      this.loading.element.hide();
     }
 
   });
