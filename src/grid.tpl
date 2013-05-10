@@ -7,61 +7,62 @@
   <div class="bd">
 
     <div data-role="hd" class="grid-hd unselectable">
-      <table><thead><tr>
-        {{#if needCheckbox}}
-          <th class="grid-cell" width="{{checkboxWidth}}">
-            <input type="checkbox" data-role="checkAll"/>
-          </th>
-        {{/if}}
-        {{#if needOrder}}
-          <th class="grid-cell" width="{{orderWidth}}"></th>
-        {{/if}}
-        {{#each fields}}
-          <th class="grid-cell" data-name="{{name}}" width="{{width}}">
-            <span>{{header}}</span>
-          </th>
-        {{/each}}
-      </tr></thead></table>
+      <table>
+        <thead>
+          <tr>
+            {{#if needCheckbox}}
+              <th style="width:{{checkboxWidth}}px;"></th>
+            {{/if}}
+            {{#if needOrder}}
+              <th style="width:{{orderWidth}}px;"></th>
+            {{/if}}
+            {{#each fields}}
+              <th style="width:{{width}}px;"></th>
+            {{/each}}
+            <th style="width:18px;"></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{createHeader headers}}
+        </tbody>
+      </table>
     </div>
 
     <div data-role="bd" class="grid-bd"{{#if height}} style="height:{{height}}px"{{/if}}>
-      <table><tbody>
-        {{#each records}}
-          <tr class="grid-row{{#if isAlt}} grid-row-alt{{/if}}">
-            {{#if ../needCheckbox}}
-              <td class="grid-cell grid-mark-cell" width="{{../../checkboxWidth}}">
-                <input type="checkbox" data-role="check"/>
-              </td>
+      <table>
+        <thead>
+          <tr>
+            {{#if needCheckbox}}
+              <th style="width:{{checkboxWidth}}px;"></th>
             {{/if}}
-            {{#if ../needOrder}}
-              <td class="grid-cell grid-mark-cell" width="{{../../orderWidth}}">
-                {{order}}
-              </td>
+            {{#if needOrder}}
+              <th style="width:{{orderWidth}}px;"></th>
             {{/if}}
-            {{#each values}}
-              <td class="grid-cell" width="{{width}}"{{#if align}} style="text-align:{{align}};"{{/if}}>
-                {{{value}}}
-              </td>
+            {{#each fields}}
+              <th style="width:{{width}}px;"></th>
             {{/each}}
+            <th></th>
           </tr>
-        {{/each}}
-      </tbody></table>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     {{#if paginate}}
-      <div data-role="ft" class="toolbar toolbar-ft">
-        <span class="toolbar-text toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span>
-        <i class="icon icon-btn {{#if isFirst}}icon-btn-is-disabled icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i>
-        <i class="icon icon-btn {{#if hasPrev}}icon-grid-page-prev{{else}}icon-btn-is-disabled icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i>
+      <div data-role="ft" class="toolbar-ft">
+        <span class="toolbar-text-right">共{{totalCount}}条记录，每页{{pageSize}}条</span>
+        <i class="{{#if isFirst}}icon-grid-page-first-disabled{{else}}icon-grid-page-first{{/if}}" data-role="first"></i>
+        <i class="{{#if hasPrev}}icon-grid-page-prev{{else}}icon-grid-page-prev-disabled{{/if}}" data-role="prev"></i>
         <i class="toolbar-separator"></i>
         <span class="toolbar-text">当前第</span>
         <input style="width:40px;" type="text" data-role="num">
         <span class="toolbar-text">/{{pageNumbers}}页</span>
         <i class="toolbar-separator"></i>
-        <i class="icon icon-btn {{#if hasNext}}icon-grid-page-next{{else}}icon-btn-is-disabled icon-grid-page-next-disabled{{/if}}" data-role="next"></i>
-        <i class="icon icon-btn {{#if isLast}}icon-btn-is-disabled icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i>
+        <i class="{{#if hasNext}}icon-grid-page-next{{else}}icon-grid-page-next-disabled{{/if}}" data-role="next"></i>
+        <i class="{{#if isLast}}icon-grid-page-last-disabled{{else}}icon-grid-page-last{{/if}}" data-role="last"></i>
         <i class="toolbar-separator"></i>
-        <i class="icon icon-btn icon-grid-refresh" data-role="refresh"></i>
+        <i class="icon-grid-refresh" data-role="refresh"></i>
       </div>
     {{/if}}
   </div>

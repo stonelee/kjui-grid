@@ -2,6 +2,7 @@ define(function(require, exports, module) {
   var $ = require('$'),
     Widget = require('widget'),
     Templatable = require('templatable'),
+    Handlebars = require('handlebars'),
     _ = require('underscore');
 
   var Loading = require('./loading');
@@ -24,10 +25,10 @@ define(function(require, exports, module) {
       paginate: true,
 
       needCheckbox: false,
-      checkboxWidth: 20,
+      checkboxWidth: 30,
 
       needOrder: false,
-      orderWidth: 20,
+      orderWidth: 30,
 
       width: null,
       height: null
@@ -45,49 +46,143 @@ define(function(require, exports, module) {
         pageSize: 0,
         pageNumbers: 0
       });
-      this.model.fields = this._processField();
+      this.model.headers = this._processHeaders();
+      this.model.fields = this._processFields();
 
       Grid.superclass.parseElement.call(this);
     },
 
-    _processField: function() {
-      var fields = this.model.fields;
+    _processHeaders: function() {
+      var headers = [];
 
-      var specWidth = 0,
-        specNum = 0;
-      $.each(fields, function() {
-        if (this.width) {
-          specWidth += this.width;
-          specNum += 1;
+      //get headers
+      function loopHeader(nodes, level) {
+        if (headers.length < level + 1) {
+          headers.push(nodes);
+        } else {
+          headers[level] = headers[level].concat(nodes);
         }
-      });
 
-      //padding-width + border-width = 9
+        var nextLevel = level + 1;
+        $.each(nodes, function() {
+          if (this.children && this.children.length > 0) {
+            loopHeader(this.children, nextLevel);
+          }
+        });
+      }
+      loopHeader(this.model.fields, 0);
+
+      //set colspan & rowspan
+      function loopChildren(nodes, num) {
+        var result = num + nodes.length;
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.children && node.children.length > 0) {
+            result = loopChildren(node.children, result - 1);
+          }
+        }
+        return result;
+      }
+      var levelNum = headers.length;
+      for (var i = 0; i < levelNum; i++) {
+        var header = headers[i];
+        for (var j = 0; j < header.length; j++) {
+          var h = header[j];
+          if (h.children && h.children.length > 0) {
+            var colspan = 0;
+            colspan = loopChildren(h.children, colspan);
+            h.colspan = colspan;
+          } else {
+            if (levelNum > 1) {
+              h.rowspan = levelNum - i;
+            }
+            if (h.rowspan == 1) {
+              delete h.rowspan;
+            }
+          }
+        }
+      }
+
+      return headers;
+    },
+
+    _processFields: function() {
+      var specWidth = 0,
+        specNum = 0,
+        fields = [];
+
+      function loopHeader(nodes) {
+        $.each(nodes, function() {
+          if (this.width) {
+            specWidth += this.width;
+            specNum += 1;
+          }
+          if (this.children && this.children.length > 0) {
+            loopHeader(this.children);
+          } else {
+            fields.push(this);
+          }
+        });
+      }
+      loopHeader(this.model.fields);
+
+      //如果没有设置width则平均分配宽度
       //滚动条宽度取18
-      var leftWidth = this.model.width - fields.length * 9 - specWidth - 18;
+      //TODO: 过长不用-18
+      var remainWidth = this.model.width - specWidth - 18;
       if (this.model.needCheckbox) {
-        leftWidth = leftWidth - this.model.checkboxWidth - 9;
+        remainWidth = remainWidth - this.model.checkboxWidth;
       }
       if (this.model.needOrder) {
-        leftWidth = leftWidth - this.model.orderWidth - 9;
+        remainWidth = remainWidth - this.model.orderWidth;
       }
-      var averageWidth = leftWidth / (fields.length - specNum);
+      var averageWidth = remainWidth / (fields.length - specNum);
 
-      fields = $.map(fields, function(field) {
-        if (!field.width) {
-          field.width = averageWidth;
+      for (var i = fields.length - 1; i >= 0; i--) {
+        if (!fields[i].width) {
+          fields[i].width = averageWidth;
         }
-        return field;
-      });
+      }
+
       return fields;
+    },
+
+    templateHelpers: {
+      createHeader: function(headers) {
+        //first tr
+        var options = $.extend({}, this, {
+          needRowspan: this.headers.length > 1,
+          rowspan: this.headers.length
+        });
+        var extraTd = Handlebars.compile(require('./extraHeaderTd.tpl'))(options);
+        var trs = '<tr>' + extraTd;
+
+        var tpl = require('./headerTd.tpl');
+        var td = Handlebars.compile(tpl)({
+          headers: this.headers[0]
+        });
+        trs += td + '</tr>';
+
+        //other tr
+        for (var i = 1; i < this.headers.length; i++) {
+          trs += '<tr>';
+          td = Handlebars.compile(tpl)({
+            headers: this.headers[i]
+          });
+          trs += td + '</tr>';
+        }
+
+        return new Handlebars.SafeString(trs);
+      }
     },
 
     _onRenderUrl: function(url) {
       var self = this;
 
-      this.loading();
+      this.showLoading();
       $.getJSON(url, function(data) {
         self._loadData(data.data);
+        self.hideLoading();
       });
     },
 
@@ -96,20 +191,20 @@ define(function(require, exports, module) {
     },
 
     _loadData: function(data) {
+      var self = this;
       this.data = data;
 
-      var fields = this.model.fields;
-      var needOrder = this.model.needOrder;
+      //body
       var records = $.map(data.result, function(record, index) {
         var order = '';
-        if (needOrder) {
+        if (self.model.needOrder) {
           order = (data.pageNumber - 1) * data.pageSize + index + 1;
         }
 
         return {
           isAlt: index % 2 === 1,
           order: order,
-          values: $.map(fields, function(field) {
+          values: $.map(self.model.fields, function(field) {
             var value = record[field.name];
             value = _.escape(value);
 
@@ -123,9 +218,14 @@ define(function(require, exports, module) {
         };
       });
 
-      $.extend(this.model, {
-        records: records,
+      var body = Handlebars.compile(require('./body.tpl'))($.extend({}, this.model, {
+        records: records
+      }));
+      this.$('[data-role=bd] tbody').html(body);
 
+
+      //paginate
+      $.extend(this.model, {
         isFirst: function() {
           return data.pageNumber <= 1;
         },
@@ -140,7 +240,7 @@ define(function(require, exports, module) {
           return Math.ceil(data.totalCount / data.pageSize);
         }
       });
-      this.element.html(this.compile());
+      this.renderPartial('[data-role=ft]');
 
       //将数据绑定到$row上
       var $rows = this.$('.grid-row');
@@ -161,17 +261,19 @@ define(function(require, exports, module) {
       } else {
         this.selected = null;
       }
+      this.$('[data-role=checkAll]').prop('checked', false);
 
       this.$('[data-role=num]').val(data.pageNumber);
 
       //disabled button will not be clicked
-      this.$('.icon-btn').click(function(e) {
-        if ($(this).hasClass('icon-btn-is-disabled')) {
+      this.$('i').click(function(e) {
+        if (/disabled/.test(e.target.className)) {
           e.stopImmediatePropagation();
         }
       });
 
-      this.trigger('rendered');
+      this.trigger('loaded');
+
     },
 
     events: {
@@ -320,14 +422,17 @@ define(function(require, exports, module) {
       this._onRenderUrl(url);
     },
 
-    loading: function() {
-      return new Loading({
+    showLoading: function() {
+      this.loading =  new Loading({
         parentNode: this.$('[data-role=bd]'),
         model: {
           left: (this.model.width - 106) / 2,
           top: (this.model.height - 36) / 2
         }
       }).render();
+    },
+    hideLoading: function() {
+      this.loading.element.remove();
     }
 
   });

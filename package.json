@@ -13,8 +13,9 @@
   },
   "dependencies": {
     "$": "$",
-    "widget": "arale/widget/1.0.2/widget",
+    "widget": "arale/widget/1.0.4/widget",
     "templatable": "arale/widget/1.0.4/templatable",
+    "handlebars": "gallery/handlebars/1.0.1/handlebars",
     "underscore": "gallery/underscore/1.4.2/underscore"
   },
   "output": {

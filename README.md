@@ -29,7 +29,7 @@ ajax请求数据的路径
 
 * `header` 列名
 * `name` data中该列对应的key
-* `width` `Number` 该列宽度
+* `width` `Number` 该列宽度,如果不设则平均分配
 * `align` 对齐方式,取值为`left`,`center`,`right`
 * `render` 自定义渲染函数，参数为该单元格的值
 
@@ -43,6 +43,21 @@ render: function(value) {
 render: function(value) {
   return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
 }
+```
+
+* `children` 可以定义复杂表头，如果设置了children则width无效，这时宽度取决于子表的宽度。
+
+```js
+//定义两个子表头
+header: '名称',
+children: [{
+  header: '验票站名称',
+  name: 'stationName',
+  width: 150
+}, {
+  header: '矿企名称',
+  name: 'mineName'
+}]
 ```
 
 ### title `String`
@@ -59,7 +74,7 @@ render: function(value) {
 
 ### checkboxWidth `Number`
 
-多选框列的宽度，默认为20
+多选框列的宽度，默认为30
 
 ### needOrder `Boolean`
 
@@ -67,7 +82,7 @@ render: function(value) {
 
 ### orderWidth `Number`
 
-自动编号列的宽度，默认为20
+自动编号列的宽度，默认为30
 
 ### width `Number`
 
@@ -116,9 +131,13 @@ render: function(value) {
 
 刷新数据
 
-### loading ` `
+### showLoading ` `
 
 显示loading提示
+
+### hideLoading ` `
+
+隐藏loading提示
 
 ## 事件
 
@@ -136,9 +155,9 @@ render: function(value) {
 * `name` 该列对应的数据key name
 * `direction` 升序还是降序
 
-### rendered `  `
+### loaded `  `
 
-组件渲染完毕后触发，可以自由更改默认样式
+数据加载完毕后触发，可以自由更改默认样式
 
 * `grid` 组件实例
 
@@ -169,3 +188,11 @@ render: function(value) {
 * 标题行 `hd`
 * 内容行 `bd`
 * 分页栏 `ft`
+
+## TODO
+
+* 过长表格
+* 直接打印
+* 列拉伸
+* 配置项sortable
+

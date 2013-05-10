@@ -249,7 +249,7 @@ seajs.use(['$','grid'], function($, Grid) {
       needCheckbox: true,
       height: 190
     },
-    onRendered: function(){
+    onLoaded: function(){
       var self = this;
       var $ft = this.$('[data-role=ft]');
       var $btnSelected = $('<div class="toolbar-btn">').html('已选择').appendTo($ft);
