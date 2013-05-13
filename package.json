@@ -1,6 +1,6 @@
 {
   "name": "grid",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "root": "kjui",
   "description": "提供了表格展示功能，可以分页，点击，排序",
   "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
