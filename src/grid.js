@@ -275,7 +275,12 @@ define(function(require, exports, module) {
       } else {
         this.selected = null;
       }
-      this.$('[data-role=checkAll]').prop('checked', false);
+
+      var $checkAll = this.$('[data-role=checkAll]');
+      if ($checkAll.length > 0) {
+        $checkAll[0].indeterminate = false;
+        $checkAll.prop('checked', false);
+      }
 
       this.$('[data-role=num]').val(data.pageNumber);
 
@@ -351,10 +356,19 @@ define(function(require, exports, module) {
     _check: function(e) {
       var $target = $(e.target);
       var $row = $target.parents('tr');
+      var $checkAll = $('[data-role=checkAll]');
 
+      $checkAll[0].indeterminate = true;
       if ($target.prop('checked')) {
+        //选中
         this.selected.push($row);
         $row.addClass('grid-row-is-selected');
+
+        //如果全部选中
+        if ($('[data-role=check]').not(':checked').length === 0) {
+          $checkAll[0].indeterminate = false;
+          $checkAll.prop('checked', true);
+        }
       } else {
         var id = $row.data('data').id;
         for (var i = this.selected.length - 1; i >= 0; i--) {
@@ -363,6 +377,12 @@ define(function(require, exports, module) {
           }
         }
         $row.removeClass('grid-row-is-selected');
+
+        //如果全部取消选中
+        if (!$('[data-role=check]').is(':checked')) {
+          $checkAll[0].indeterminate = false;
+          $checkAll.prop('checked', false);
+        }
       }
     },
     _checkAll: function(e) {
