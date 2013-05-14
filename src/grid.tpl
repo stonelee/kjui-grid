@@ -1,12 +1,12 @@
-<div class="mod" style="width:{{width}}px;">
+<div class="panel-mod" style="width:{{width}}px;">
   {{#if title}}
-  <div class="hd unselectable">
-    <span class="hd-title">{{title}}</span>
+  <div class="panel-hd">
+    <span>{{title}}</span>
   </div>
   {{/if}}
-  <div class="bd">
+  <div class="panel-bd">
 
-    <div class="grid-hd unselectable">
+    <div class="grid-hd">
       <table>
         <thead>
           <tr>

@@ -310,7 +310,7 @@ define(function(require, exports, module) {
 
     _sort: function(e) {
       var cell = $(e.target).closest('td');
-      if (!cell[0].hasAttribute('data-sortable')) return;
+      if (!cell.hasClass('grid-is-sortable')) return;
 
       var name = cell.attr('data-name');
 
