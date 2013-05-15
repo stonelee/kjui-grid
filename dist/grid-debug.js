@@ -182,7 +182,7 @@ define("kjui/grid/1.3.0/grid-debug", ["./loading-debug", "$-debug", "arale/widge
         var extraTd = Handlebars.compile('{{#if needCheckbox}} <td class="grid-cell" width="{{checkboxWidth}}"{{#if needRowspan}} rowspan="{{rowspan}}"{{/if}}> <input type="checkbox" data-role="checkAll"/> </td> {{/if}} {{#if needOrder}} <td class="grid-cell" width="{{orderWidth}}"{{#if needRowspan}} rowspan="{{rowspan}}"{{/if}}></td> {{/if}}')(options);
         var trs = '<tr>' + extraTd;
 
-        var tpl = '{{#each headers}} <td class="grid-cell{{addSortClass sort}}" {{#if name}} data-name="{{name}}"{{/if}} {{#if sort}} data-sortable{{/if}} {{#if rowspan}} rowspan="{{rowspan}}"{{/if}} {{#if colspan}} colspan="{{colspan}}"{{/if}} ><span>{{header}}</span> </td> {{/each}}';
+        var tpl = '{{#each headers}} <td class="grid-cell{{addSortClass sort}}{{#if sort}} grid-is-sortable{{/if}}" {{#if name}} data-name="{{name}}"{{/if}} {{#if rowspan}} rowspan="{{rowspan}}"{{/if}} {{#if colspan}} colspan="{{colspan}}"{{/if}} ><span>{{header}}</span> </td> {{/each}}';
         Handlebars.registerHelper('addSortClass', function(sort) {
           if (sort == 'asc' || sort == 'desc') {
             return new Handlebars.SafeString(' grid-is-' + sort);
@@ -328,7 +328,7 @@ define("kjui/grid/1.3.0/grid-debug", ["./loading-debug", "$-debug", "arale/widge
 
     _sort: function(e) {
       var cell = $(e.target).closest('td');
-      if (!cell[0].hasAttribute('data-sortable')) return;
+      if (!cell.hasClass('grid-is-sortable')) return;
 
       var name = cell.attr('data-name');
 
