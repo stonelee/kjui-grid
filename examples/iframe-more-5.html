@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html lang="zh">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-    <title>Grid Mocha Runner</title>
-    <link href="../static/css/mocha.css" type="text/css" rel="stylesheet" charset="utf-8">
+    <meta charset="UTF-8">
+    <title>Grid</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    /* alipay iconfont */
+    @font-face {
+        font-family: "rei";
+        src: url("https://i.alipayobjects.com/common/fonts/rei.eot?20130502"); /* IE9 */
+        src: url("https://i.alipayobjects.com/common/fonts/rei.eot?20130502#iefix") format("embedded-opentype"), /* IE6-IE8 */
+        url("https://i.alipayobjects.com/common/fonts/rei.woff?20130502") format("woff"), /* chrome 6+、firefox 3.6+、Safari5.1+、Opera 11+ */
+        url("https://i.alipayobjects.com/common/fonts/rei.ttf?20130502")  format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+ */
+        url("https://i.alipayobjects.com/common/fonts/rei.svg?20130502#rei") format("svg"); /* iOS 4.1- */
+    }
+    .iconfont {
+        font-family:"rei";
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        color: #4d4d4d;
+        cursor: default;
+        -webkit-font-smoothing: antialiased;
+    }
+    </style>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -85,28 +106,45 @@
   })();
 </script>
 <link rel="stylesheet" href="http://stonelee.info/kjui-extui/dist/extui.css" />
-    <script src="http://assets.spmjs.org/gallery/mocha/1.9.0/mocha.js"></script>
   </head>
   <body>
-    <div id="mocha"></div>
-    <script>
-      (function() {
-        mocha.setup('bdd');
-        var tests = [];
+    
+<script type="text/javascript">
+seajs.use(['$','grid'], function($, Grid) {
+  var fields = [{
+    header: '编号',
+    align: 'center',
+    name: 'id'
+  }, {
+    header: '验票站名称',
+    name: 'stationName',
+    width: 180
+  }, {
+    header: '矿企名称',
+    name: 'mineName'
+  }, {
+    header: '车牌号',
+    width:80,
+    name: 'licensePlateNumber'
+  }, {
+    header: '矿种',
+    name: 'coalType'
+  }];
 
-        var specs = [];
-        for (var i = 0; i < tests.length; i++) {
-          specs[i] = './' + tests[i];
-        }
+  new Grid({
+    url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
+    model: {
+      fields: fields,
+      title: 'title',
+      needCheckbox: true,
+      needOrder: true,
+      height: 190
+    }
+  }).render();
 
-        seajs.use(specs, function() {
-          if (window.mochaPhantomJS) {
-            mochaPhantomJS.run()
-          } else {
-            mocha.run()
-          }
-        })
-      })();
-    </script>
+});
+</script>
+ 
   </body>
 </html>

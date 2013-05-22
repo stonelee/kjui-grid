@@ -1,23 +1,26 @@
 {
-    "name": "grid",
-    "version": "1.1.0",
-    "root": "kjui",
-    "description": "grid",
-    "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/stonelee/kjui-grid.git"
+  "name": "grid",
+  "family": "kjui",
+  "version": "1.3.0",
+  "description": "提供了表格展示功能，可以分页，点击，排序",
+  "keywords": ["widget"],
+  "author": "Stone Lee <istonelee@gmail.com> (http://stonelee.info)",
+  "homepage": "http://stonelee.info/kjui-grid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stonelee/kjui-grid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stonelee/kjui-grid/issues"
+  },
+  "spm": {
+    "alias": {
+      "$": "$",
+      "widget": "arale/widget/1.0.3/widget",
+      "templatable": "arale/widget/1.0.3/templatable",
+      "handlebars": "gallery/handlebars/1.0.0/handlebars",
+      "underscore": "gallery/underscore/1.4.4/underscore"
     },
-    "bugs": {
-        "url": "https://github.com/stonelee/kjui-grid/issues"
-    },
-    "dependencies": {
-        "$": "$",
-        "widget": "arale/widget/1.0.2/widget",
-        "handlebars": "gallery/handlebars/1.0.0/handlebars",
-        "underscore": "gallery/underscore/1.4.2/underscore"
-    },
-    "output": {
-        "grid.js": "."
-    }
+    "output": ["grid.js"]
+  }
 }

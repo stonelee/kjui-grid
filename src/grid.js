@@ -1,58 +1,231 @@
 define(function(require, exports, module) {
   var $ = require('$'),
     Widget = require('widget'),
-    handlebars = require('handlebars'),
+    Templatable = require('templatable'),
+    Handlebars = require('handlebars'),
     _ = require('underscore');
 
-  var tpl = require('./grid.tpl');
+  var Loading = require('./loading');
 
   var Grid = Widget.extend({
-    attrs: {
-      fields: [],
+    Implements: Templatable,
 
+    attrs: {
       url: '',
       urlParser: null,
-      data: [],
+      data: []
+    },
+
+    template: require('./grid.tpl'),
+
+    model: {
+      fields: [],
 
       title: '',
       paginate: true,
 
       needCheckbox: false,
-      checkboxWidth: 20,
+      checkboxWidth: 30,
 
       needOrder: false,
-      orderWidth: 20,
+      orderWidth: 30,
 
-      width: 0,
-      height: 0
+      width: null,
+      height: null
+    },
+
+    parseElement: function() {
+      _.defaults(this.model, {
+        width: $(this.get('parentNode')).innerWidth(),
+        records: [],
+        isFirst: true,
+        isLast: true,
+        hasPrev: false,
+        hasNext: false,
+        totalCount: 0,
+        pageSize: 0,
+        pageNumbers: 0
+      });
+      this.model.headers = this._processHeaders();
+      this.model.fields = this._processFields();
+
+      Grid.superclass.parseElement.call(this);
+    },
+
+    _processHeaders: function() {
+      var headers = [];
+
+      //get headers
+      function loopHeader(nodes, level) {
+        if (headers.length < level + 1) {
+          headers.push(nodes);
+        } else {
+          headers[level] = headers[level].concat(nodes);
+        }
+
+        var nextLevel = level + 1;
+        $.each(nodes, function() {
+          if (this.children && this.children.length > 0) {
+            loopHeader(this.children, nextLevel);
+          }
+        });
+      }
+      loopHeader(this.model.fields, 0);
+
+      //set colspan & rowspan
+      function loopChildren(nodes, num) {
+        var result = num + nodes.length;
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.children && node.children.length > 0) {
+            result = loopChildren(node.children, result - 1);
+          }
+        }
+        return result;
+      }
+      var levelNum = headers.length;
+      for (var i = 0; i < levelNum; i++) {
+        var header = headers[i];
+        for (var j = 0; j < header.length; j++) {
+          var h = header[j];
+          if (h.children && h.children.length > 0) {
+            var colspan = 0;
+            colspan = loopChildren(h.children, colspan);
+            h.colspan = colspan;
+          } else {
+            if (levelNum > 1) {
+              h.rowspan = levelNum - i;
+            }
+            if (h.rowspan == 1) {
+              delete h.rowspan;
+            }
+          }
+        }
+      }
+
+      return headers;
+    },
+
+    _processFields: function() {
+      var specWidth = 0,
+        specNum = 0,
+        fields = [];
+
+      function loopHeader(nodes) {
+        $.each(nodes, function() {
+          if (this.children && this.children.length > 0) {
+            loopHeader(this.children);
+          } else {
+            fields.push(this);
+            //子表头宽度有效
+            if (this.width) {
+              specWidth += this.width;
+              specNum += 1;
+            }
+          }
+        });
+      }
+      loopHeader(this.model.fields);
+
+      //滚动条宽度
+      var scrollWidth = 18;
+      //过长表格
+      if (specNum === fields.length && specWidth > this.model.width) {
+        this.model.isLong = true;
+        scrollWidth = 0;
+      }
+
+      //如果没有设置width则平均分配宽度
+      var remainWidth = this.model.width - specWidth - scrollWidth;
+      if (this.model.needCheckbox) {
+        remainWidth = remainWidth - this.model.checkboxWidth;
+      }
+      if (this.model.needOrder) {
+        remainWidth = remainWidth - this.model.orderWidth;
+      }
+      var averageWidth = remainWidth / (fields.length - specNum);
+
+      for (var i = fields.length - 1; i >= 0; i--) {
+        if (!fields[i].width) {
+          fields[i].width = averageWidth;
+        }
+      }
+
+      return fields;
+    },
+
+    templateHelpers: {
+      createHeader: function(headers) {
+        //first tr
+        var options = $.extend({}, this, {
+          needRowspan: this.headers.length > 1,
+          rowspan: this.headers.length
+        });
+        var extraTd = Handlebars.compile(require('./extraHeaderTd.tpl'))(options);
+        var trs = '<tr>' + extraTd;
+
+        var tpl = require('./headerTd.tpl');
+        Handlebars.registerHelper('addSortClass', function(sort) {
+          if (sort == 'asc' || sort == 'desc') {
+            return new Handlebars.SafeString(' grid-is-' + sort);
+          }
+        });
+        var td = Handlebars.compile(tpl)({
+          headers: this.headers[0]
+        });
+        trs += td + '</tr>';
+
+        //other tr
+        for (var i = 1; i < this.headers.length; i++) {
+          trs += '<tr>';
+          td = Handlebars.compile(tpl)({
+            headers: this.headers[i]
+          });
+          trs += td + '</tr>';
+        }
+
+        return new Handlebars.SafeString(trs);
+      }
+    },
+
+    setup: function() {
+      var self = this;
+      if (this.model.isLong) {
+        this.$('.grid-view').scroll(function() {
+          self.$('.grid-hd').scrollLeft($(this).scrollLeft());
+        });
+      }
     },
 
     _onRenderUrl: function(url) {
       var self = this;
+
+      this.showLoading();
       $.getJSON(url, function(data) {
-        self._createGrid(data.data);
+        self._loadData(data.data);
+        self.hideLoading();
       });
     },
+
     _onRenderData: function(data) {
-      this._createGrid(data);
+      this._loadData(data);
     },
 
-    _createGrid: function(data) {
+    _loadData: function(data) {
+      var self = this;
       this.data = data;
 
-      var gridWidth = this.get('width') || this.element.parent().width();
-      var fields = this._processField(gridWidth);
-      var needOrder = this.get('needOrder');
+      //body
       var records = $.map(data.result, function(record, index) {
         var order = '';
-        if (needOrder) {
+        if (self.model.needOrder) {
           order = (data.pageNumber - 1) * data.pageSize + index + 1;
         }
 
         return {
           isAlt: index % 2 === 1,
           order: order,
-          values: $.map(fields, function(field) {
+          values: $.map(self.model.fields, function(field) {
             var value = record[field.name];
             value = _.escape(value);
 
@@ -66,23 +239,14 @@ define(function(require, exports, module) {
         };
       });
 
-      var gridHeight = this.get('height');
-      var html = handlebars.compile(tpl)({
-        width: gridWidth,
-        height: gridHeight,
+      var body = Handlebars.compile(require('./body.tpl'))($.extend({}, this.model, {
+        records: records
+      }));
+      this.$('.grid-view tbody').html(body);
 
-        fields: fields,
-        records: records,
 
-        title: this.get('title'),
-        paginate: this.get('paginate'),
-
-        needCheckbox: this.get('needCheckbox'),
-        checkboxWidth: this.get('checkboxWidth'),
-
-        needOrder: needOrder,
-        orderWidth: this.get('orderWidth'),
-
+      //paginate
+      $.extend(this.model, {
         isFirst: function() {
           return data.pageNumber <= 1;
         },
@@ -93,11 +257,11 @@ define(function(require, exports, module) {
         hasNext: data.hasNext,
         totalCount: data.totalCount,
         pageSize: data.pageSize,
-        pageNumber: function() {
+        pageNumbers: function() {
           return Math.ceil(data.totalCount / data.pageSize);
         }
       });
-      this.element.html(html);
+      this.renderPartial('.toolbar-ft');
 
       //将数据绑定到$row上
       var $rows = this.$('.grid-row');
@@ -106,59 +270,28 @@ define(function(require, exports, module) {
       });
 
       //已选择的行
-      if (this.get('needCheckbox')) {
+      if (this.model.needCheckbox) {
         this.selected = [];
       } else {
         this.selected = null;
       }
 
-      //自适应高度
-      if (!gridHeight) {
-        gridHeight = this.element.height() - this.$('.grid-bd').position().top - this.$('.toolbar-ft').outerHeight() - 1;
-        this.$('.grid-bd').height(gridHeight);
+      var $checkAll = this.$('[data-role=checkAll]');
+      if ($checkAll.length > 0) {
+        $checkAll[0].indeterminate = false;
+        $checkAll.prop('checked', false);
       }
 
       this.$('[data-role=num]').val(data.pageNumber);
 
       //disabled button will not be clicked
-      this.$('.icon-btn').click(function(e) {
-        if ($(this).hasClass('icon-btn-is-disabled')) {
+      this.$('i').click(function(e) {
+        if (/disabled/.test(e.target.className)) {
           e.stopImmediatePropagation();
         }
       });
 
-      this.trigger('rendered', this);
-    },
-    _processField: function(gridWidth) {
-      var fields = this.get('fields');
-
-      var specWidth = 0,
-        specNum = 0;
-      $.each(fields, function() {
-        if (this.width) {
-          specWidth += this.width;
-          specNum += 1;
-        }
-      });
-
-      //padding-width + border-width = 9
-      //滚动条宽度取18
-      var leftWidth = gridWidth - fields.length * 9 - specWidth - 18;
-      if (this.get('needCheckbox')) {
-        leftWidth = leftWidth - this.get('checkboxWidth') - 9;
-      }
-      if (this.get('needOrder')) {
-        leftWidth = leftWidth - this.get('orderWidth') - 9;
-      }
-      var averageWidth = leftWidth / (fields.length - specNum);
-
-      fields = $.map(fields, function(field) {
-        if (!field.width) {
-          field.width = averageWidth;
-        }
-        return field;
-      });
-      return fields;
+      this.trigger('loaded');
     },
 
     events: {
@@ -176,7 +309,9 @@ define(function(require, exports, module) {
     },
 
     _sort: function(e) {
-      var cell = $(e.target).closest('th');
+      var cell = $(e.target).closest('td');
+      if (!cell.hasClass('grid-is-sortable')) return;
+
       var name = cell.attr('data-name');
 
       //只能按照单独的列排序
@@ -203,7 +338,7 @@ define(function(require, exports, module) {
       var $row = $target.parents('tr');
       var data = $row.data('data');
 
-      if (!this.get('needCheckbox')) {
+      if (!this.model.needCheckbox) {
         if (this.selected && this.selected.data('data').id === data.id) {
           this.selected = null;
           $row.removeClass('grid-row-is-selected');
@@ -221,10 +356,19 @@ define(function(require, exports, module) {
     _check: function(e) {
       var $target = $(e.target);
       var $row = $target.parents('tr');
+      var $checkAll = $('[data-role=checkAll]');
 
+      $checkAll[0].indeterminate = true;
       if ($target.prop('checked')) {
+        //选中
         this.selected.push($row);
         $row.addClass('grid-row-is-selected');
+
+        //如果全部选中
+        if ($('[data-role=check]').not(':checked').length === 0) {
+          $checkAll[0].indeterminate = false;
+          $checkAll.prop('checked', true);
+        }
       } else {
         var id = $row.data('data').id;
         for (var i = this.selected.length - 1; i >= 0; i--) {
@@ -233,6 +377,12 @@ define(function(require, exports, module) {
           }
         }
         $row.removeClass('grid-row-is-selected');
+
+        //如果全部取消选中
+        if (!$('[data-role=check]').is(':checked')) {
+          $checkAll[0].indeterminate = false;
+          $checkAll.prop('checked', false);
+        }
       }
     },
     _checkAll: function(e) {
@@ -305,6 +455,23 @@ define(function(require, exports, module) {
       //刷新往往不会改变url
       var url = this.get('url');
       this._onRenderUrl(url);
+    },
+
+    showLoading: function() {
+      if (this.loading) {
+        this.loading.element.show();
+      } else {
+        this.loading = new Loading({
+          parentNode: this.$('.grid-bd'),
+          model: {
+            left: (this.model.width - 106) / 2,
+            top: (this.model.height - 36) / 2
+          }
+        }).render();
+      }
+    },
+    hideLoading: function() {
+      this.loading.element.hide();
     }
 
   });

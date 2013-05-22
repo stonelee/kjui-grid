@@ -2,46 +2,94 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8">
-    <title>Grid - 不同宽度高度</title>
+    <title>kjui/grid - 不同宽度高度</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="nico 0.2.2" />
+    <meta name="generator" content="nico 0.3.1" />
     <link type="image/x-icon" href="../static/css/favicon.ico" rel="icon">
     <link rel="stylesheet" href="../static/css/normalize.css" />
     <link rel="stylesheet" href="../static/css/site.css" />
     <link rel="stylesheet" href="../static/css/solarized.css" />
-    <script src="http://static.alipayobjects.com/seajs/1.3.1/sea.js"></script>
-    <script src="../static/js/arale-helper.js"></script>
-    <script src="../static/js/site.js"></script><script type="text/javascript">
+<script type="text/javascript">
+
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-36247332-1']);
   _gaq.push(['_trackPageview']);
 
-  <!--(function() {-->
-    <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
-    <!--ga.src = 'https://ssl.google-analytics.com/ga.js';-->
-    <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
-  <!--})();-->
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    if (location.port) {
+       return;
+    }
+    ga.src = 'https://ssl.google-analytics.com/ga.js'; 
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
 </script>
+<script src="http://assets.spmjs.org/seajs/seajs/2.0.0/??sea.js,plugin-combo.js,plugin-debug.js,plugin-text.js,plugin-style.js"></script>
 <script>
   (function() {
-    var data;
-    seajs._package = data = {"name":"grid","version":"1.1.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","repository":{"type":"git","url":"https://github.com/stonelee/kjui-grid.git"},"bugs":{"url":"https://github.com/stonelee/kjui-grid/issues"},"dependencies":{"$":"$","widget":"arale/widget/1.0.2/widget","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.2/underscore"},"output":{"grid.js":"."}}
-    data.dependencies && (delete data.dependencies['$'])
-    data.devDependencies && (delete data.devDependencies['$'])
 
-    seajs.config({ alias: data.dependencies })
-    seajs.config({ alias: data.devDependencies })
-    seajs.config({ alias: {"grid":"../src/grid.js"} })
+  var query = location.search.substring(1).split('&');
+  var srcdir = 'src';
 
-    // for alice
-    for(var dep in data.dependencies) {
-        // 如果依赖的是样式模块
-        if (data.dependencies[dep].indexOf('.css') > 0) {
-            seajs.use(dep);
-        }
+  if (contain(query, 'dist')) {
+    srcdir = 'dist';
+  } else if (contain(query, 'cov')) {
+    srcdir = 'src-cov';
+  }
+
+  seajs.config({
+    alias: {
+      "$": 'jquery/jquery/1.7.2/jquery',
+      jquery: 'jquery/jquery/1.7.2/jquery',
+      "jquery-debug": 'jquery/jquery/1.7.2/jquery-debug',
+      expect: "gallery/expect/0.2.0/expect",
+      puerh: "popomore/puerh/0.1.0/puerh",
+      'gallery/handlebars': 'gallery/handlebars/1.0.1/handlebars',
+      sinon: "gallery/sinon/1.6.0/sinon"
+    },
+    map: [function(uri) {
+      // resolve id
+      var m = uri.match(/kjui\/grid\/1.3.0\/(.*)/);
+      if (m) {
+        return resolve(m[1]);
+      }
+      return uri;
+    }],
+    comboExcludes: {test: function(uri) {
+      return uri.indexOf('http://assets.spmjs.org') === -1;
+    }}
+  });
+
+  function resolve(file) {
+    if (contain(query, 'debug')) {
+      if (file.indexOf('-debug') === -1) {
+        file = file.replace(/\.(\w+)$/, '-debug.$1');
+      }
     }
+    return seajs.resolve("../" + srcdir + "/" + file);
+  }
+
+  function contain(arr, value) {
+    for (var i in arr) {
+      if (arr[i] === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+      seajs.config({ alias: {"widget":"arale/widget/1.0.3/widget","templatable":"arale/widget/1.0.3/templatable","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.4/underscore"}});
+    seajs.use([]);
+
+    seajs.config({alias: {
+      "$-debug": 'jquery/jquery/1.7.2/jquery-debug'
+        ,"loading": resolve("loading.js")
+        ,"grid": resolve("grid.js")
+    }});
   })();
 </script>
+<link rel="stylesheet" href="http://stonelee.info/kjui-extui/dist/extui.css" />
+    <script src="../static/js/site.js"></script>
     <!--[if lt IE 9]>
     <script src="../static/js/html5shiv.js"></script>
     <![endif]-->
@@ -53,25 +101,22 @@
       <h1>
           <a href="../">Grid</a><sup class="package-root"><a href="/">kjui</a></sup>
       </h1>
-        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.1.0</a></p>
-        <p class="description">grid</p>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.3.0</a></p>
+        <p class="description">提供了表格展示功能，可以分页，点击，排序</p>
         <a class="source" href="https://github.com/stonelee/kjui-grid.git" target="_blank">View the Project</a>
         <ul id="navigation" role="navigation">
           <li><a href="../">文档</a></li>
-          <li><a href="../examples/">演示</a></li>
+          <li><a href="index.html">演示</a></li>
           <li><a class="issue-link" href="https://github.com/stonelee/kjui-grid/issues" target="_blank">讨论</a></li>
         </ul>
         
 <ol id="sidenav">
-  <li><a href="../examples/">基本用法</a></li>
-  <li><a href="../examples/size.html">不同宽度高度</a></li>
-  <li><a href="../examples/more.html">更多</a></li>
+  <li><a href="index.html">基本用法</a></li>
+  <li><a href="size.html">不同宽度高度</a></li>
+  <li><a href="more.html">更多</a></li>
 </ol>
-
-<ul id="module-output"> 
-</ul>
 <div id="output-card">
-    <h3>kjui/grid/1.1.0/<a target="_blank" id="output-file"></a></h3>
+    <h3>kjui/grid/1.3.0/<a target="_blank" id="output-file"></a></h3>
     <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
 </div>
 
@@ -81,14 +126,11 @@
 <article class="hentry">
   <h1 class="entry-title">不同宽度高度</h1>
   <div class="entry-content">
-    <h2 id="%E5%9B%BA%E5%AE%9A%E5%AE%BD%E5%BA%A6%E5%92%8C%E9%AB%98%E5%BA%A6">固定宽度和高度</h2>
-<p>适用于grid固定大小的场合</p>
+    <h2 id="固定宽度和高度">固定宽度和高度</h2><p>适用于grid固定大小的场合</p>
 <div class="nico-iframe">
-<iframe src="iframe-examples-size-1.html" allowtransparency="true" 
-frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-
-<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+<iframe src="iframe-size-1.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
 
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
@@ -111,25 +153,22 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0
   }];
 
   <span class="keyword">new</span> Grid({
-    element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
-    fields: fields,
-    width: <span class="number">650</span>,
-    height: <span class="number">190</span>
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      width: <span class="number">650</span>,
+      height: <span class="number">190</span>
+    }
   }).render();
 
 });
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</code></pre></div><h2 id="%E4%B8%8D%E5%9B%BA%E5%AE%9A%E5%AE%BD%E5%BA%A6%EF%BC%8C%E5%9B%BA%E5%AE%9A%E9%AB%98%E5%BA%A6">不固定宽度，固定高度</h2>
-<p>grid宽度自动扩展为父元素宽度</p>
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div><h2 id="不固定宽度，固定高度">不固定宽度，固定高度</h2><p>grid宽度自动扩展为父元素宽度</p>
 <div class="nico-iframe">
-<iframe src="iframe-examples-size-2.html" allowtransparency="true" 
-frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-
-<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+<iframe src="iframe-size-2.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
 
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
@@ -152,24 +191,21 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0
   }];
 
   <span class="keyword">new</span> Grid({
-    element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
-    fields: fields,
-    height: <span class="number">190</span>
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      height: <span class="number">190</span>
+    }
   }).render();
 
 });
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</code></pre></div><h2 id="%E4%B8%8D%E5%9B%BA%E5%AE%9A%E9%AB%98%E5%BA%A6">不固定高度</h2>
-<p>此时不会出现内容滚动条，当超出父元素高度时出现整体滚动条</p>
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div><h2 id="不固定高度">不固定高度</h2><p>此时不会出现内容滚动条，当超出父元素高度时出现整体滚动条</p>
 <div class="nico-iframe">
-<iframe src="iframe-examples-size-3.html" allowtransparency="true" 
-frameborder="0" scrolling="0" height="500"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-
-<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+<iframe src="iframe-size-3.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="500"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
 
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
@@ -192,26 +228,27 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0
   }];
 
   <span class="keyword">new</span> Grid({
-    element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
-    fields: fields
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>
+    }
   }).render();
 
 });
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</code></pre></div><h2 id="%E9%AB%98%E5%BA%A6%E8%87%AA%E9%80%82%E5%BA%94">高度自适应</h2>
-<p>通过计算父元素高度，实现grid高度自适应</p>
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div><h2 id="高度自适应">高度自适应</h2><p>通过计算父元素高度，实现grid高度自适应</p>
 <div class="nico-iframe">
-<iframe src="iframe-examples-size-4.html" allowtransparency="true" 
+<iframe src="iframe-size-4.html" allowtransparency="true" 
 frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
 
 <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
   <span class="comment">//自适应高度</span>
   $(<span class="string">'#demo1'</span>).height(window.innerHeight);
 
+  height = $(<span class="string">'#demo1'</span>).innerHeight() - <span class="number">79</span>;
+
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
     align: <span class="string">'center'</span>,
@@ -233,16 +270,18 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0
   }];
 
   <span class="keyword">new</span> Grid({
-    element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
+    parentNode: <span class="string">'#demo1'</span>,
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
-    fields: fields
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      height: height
+    }
   }).render();
 
 });
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</code></pre></div>
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div>
   </div>
 </article>
 </div>
@@ -251,8 +290,11 @@ seajs.use([<span class="string">'$'</span>,<span class="string">'kjui/grid/1.1.0
     </div>
     <div id="footer-wrapper">
       <footer>
-        <p class="powered">
-        
+        <p class="powered"><a href="http://aralejs.org">Arale</a> •
+<a href="http://aliceui.org">Alice</a> •
+<a href="http://seajs.org">SeaJS</a> •
+<a href="https://spmjs.org">spmjs.org</a> •
+<a href="http://lab.lepture.com/nico/">nico</a>
         </p>
       </footer>
     </div>

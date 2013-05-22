@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <title>Grid</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    /* alipay iconfont */
+    @font-face {
+        font-family: "rei";
+        src: url("https://i.alipayobjects.com/common/fonts/rei.eot?20130502"); /* IE9 */
+        src: url("https://i.alipayobjects.com/common/fonts/rei.eot?20130502#iefix") format("embedded-opentype"), /* IE6-IE8 */
+        url("https://i.alipayobjects.com/common/fonts/rei.woff?20130502") format("woff"), /* chrome 6+、firefox 3.6+、Safari5.1+、Opera 11+ */
+        url("https://i.alipayobjects.com/common/fonts/rei.ttf?20130502")  format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+ */
+        url("https://i.alipayobjects.com/common/fonts/rei.svg?20130502#rei") format("svg"); /* iOS 4.1- */
+    }
+    .iconfont {
+        font-family:"rei";
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        color: #4d4d4d;
+        cursor: default;
+        -webkit-font-smoothing: antialiased;
+    }
+    </style>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36247332-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    if (location.port) {
+       return;
+    }
+    ga.src = 'https://ssl.google-analytics.com/ga.js'; 
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script src="http://assets.spmjs.org/seajs/seajs/2.0.0/??sea.js,plugin-combo.js,plugin-debug.js,plugin-text.js,plugin-style.js"></script>
+<script>
+  (function() {
+
+  var query = location.search.substring(1).split('&');
+  var srcdir = 'src';
+
+  if (contain(query, 'dist')) {
+    srcdir = 'dist';
+  } else if (contain(query, 'cov')) {
+    srcdir = 'src-cov';
+  }
+
+  seajs.config({
+    alias: {
+      "$": 'jquery/jquery/1.7.2/jquery',
+      jquery: 'jquery/jquery/1.7.2/jquery',
+      "jquery-debug": 'jquery/jquery/1.7.2/jquery-debug',
+      expect: "gallery/expect/0.2.0/expect",
+      puerh: "popomore/puerh/0.1.0/puerh",
+      'gallery/handlebars': 'gallery/handlebars/1.0.1/handlebars',
+      sinon: "gallery/sinon/1.6.0/sinon"
+    },
+    map: [function(uri) {
+      // resolve id
+      var m = uri.match(/kjui\/grid\/1.3.0\/(.*)/);
+      if (m) {
+        return resolve(m[1]);
+      }
+      return uri;
+    }],
+    comboExcludes: {test: function(uri) {
+      return uri.indexOf('http://assets.spmjs.org') === -1;
+    }}
+  });
+
+  function resolve(file) {
+    if (contain(query, 'debug')) {
+      if (file.indexOf('-debug') === -1) {
+        file = file.replace(/\.(\w+)$/, '-debug.$1');
+      }
+    }
+    return seajs.resolve("../" + srcdir + "/" + file);
+  }
+
+  function contain(arr, value) {
+    for (var i in arr) {
+      if (arr[i] === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+      seajs.config({ alias: {"widget":"arale/widget/1.0.3/widget","templatable":"arale/widget/1.0.3/templatable","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.4/underscore"}});
+    seajs.use([]);
+
+    seajs.config({alias: {
+      "$-debug": 'jquery/jquery/1.7.2/jquery-debug'
+        ,"loading": resolve("loading.js")
+        ,"grid": resolve("grid.js")
+    }});
+  })();
+</script>
+<link rel="stylesheet" href="http://stonelee.info/kjui-extui/dist/extui.css" />
+  </head>
+  <body>
+    
+<script type="text/javascript">
+seajs.use(['$', 'grid'], function($, Grid) {
+
+  var fields = [{
+    header: '编号',
+    name: 'id',
+    width: 80,
+    align: 'center'
+  }, {
+    header: '名称',
+    children: [{
+      header: '验票站名称',
+      name: 'stationName',
+      width: 150
+    }, {
+      header: '矿企名称',
+      name: 'mineName',
+      width: 100
+    }]
+  }, {
+    header: '信息',
+    children: [{
+      header: '车牌号',
+      name: 'licensePlateNumber',
+      width: 180
+    }, {
+      header: '货物信息',
+      children: [{
+        header: '矿种',
+        name: 'coalType',
+        width: 80
+      }, {
+        header: '毛重',
+        name: 'grossWeight',
+        width: 80,
+        render: function(value) {
+          return '<b>' + value + '吨</b>';
+        }
+      }]
+    }]
+  }, {
+    header: '过站时间',
+    name: 'transitDate',
+    width: 200,
+    render: function(value) {
+      return value.split('T')[0];
+    }
+  }, {
+    header: '详细信息',
+    name: 'id',
+    width: 200,
+    align: 'center',
+    render: function(value) {
+      return '<img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;">';
+    }
+  }];
+
+  new Grid({
+    url: './grid_1.json',
+    urlParser: /(grid_)\d+(.*)/,
+    model: {
+      fields: fields,
+      title: 'title',
+      height: 190
+    }
+  }).render();
+
+});
+</script>
+ 
+  </body>
+</html>

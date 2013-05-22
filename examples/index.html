@@ -2,46 +2,94 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8">
-    <title>Grid - 基本用法</title>
+    <title>kjui/grid - 基本用法</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="nico 0.2.2" />
+    <meta name="generator" content="nico 0.3.1" />
     <link type="image/x-icon" href="../static/css/favicon.ico" rel="icon">
     <link rel="stylesheet" href="../static/css/normalize.css" />
     <link rel="stylesheet" href="../static/css/site.css" />
     <link rel="stylesheet" href="../static/css/solarized.css" />
-    <script src="http://static.alipayobjects.com/seajs/1.3.1/sea.js"></script>
-    <script src="../static/js/arale-helper.js"></script>
-    <script src="../static/js/site.js"></script><script type="text/javascript">
+<script type="text/javascript">
+
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-36247332-1']);
   _gaq.push(['_trackPageview']);
 
-  <!--(function() {-->
-    <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
-    <!--ga.src = 'https://ssl.google-analytics.com/ga.js';-->
-    <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
-  <!--})();-->
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    if (location.port) {
+       return;
+    }
+    ga.src = 'https://ssl.google-analytics.com/ga.js'; 
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
 </script>
+<script src="http://assets.spmjs.org/seajs/seajs/2.0.0/??sea.js,plugin-combo.js,plugin-debug.js,plugin-text.js,plugin-style.js"></script>
 <script>
   (function() {
-    var data;
-    seajs._package = data = {"name":"grid","version":"1.1.0","root":"kjui","description":"grid","author":"Stone Lee <istonelee@gmail.com> (http://stonelee.info)","repository":{"type":"git","url":"https://github.com/stonelee/kjui-grid.git"},"bugs":{"url":"https://github.com/stonelee/kjui-grid/issues"},"dependencies":{"$":"$","widget":"arale/widget/1.0.2/widget","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.2/underscore"},"output":{"grid.js":"."}}
-    data.dependencies && (delete data.dependencies['$'])
-    data.devDependencies && (delete data.devDependencies['$'])
 
-    seajs.config({ alias: data.dependencies })
-    seajs.config({ alias: data.devDependencies })
-    seajs.config({ alias: {"grid":"../src/grid.js"} })
+  var query = location.search.substring(1).split('&');
+  var srcdir = 'src';
 
-    // for alice
-    for(var dep in data.dependencies) {
-        // 如果依赖的是样式模块
-        if (data.dependencies[dep].indexOf('.css') > 0) {
-            seajs.use(dep);
-        }
+  if (contain(query, 'dist')) {
+    srcdir = 'dist';
+  } else if (contain(query, 'cov')) {
+    srcdir = 'src-cov';
+  }
+
+  seajs.config({
+    alias: {
+      "$": 'jquery/jquery/1.7.2/jquery',
+      jquery: 'jquery/jquery/1.7.2/jquery',
+      "jquery-debug": 'jquery/jquery/1.7.2/jquery-debug',
+      expect: "gallery/expect/0.2.0/expect",
+      puerh: "popomore/puerh/0.1.0/puerh",
+      'gallery/handlebars': 'gallery/handlebars/1.0.1/handlebars',
+      sinon: "gallery/sinon/1.6.0/sinon"
+    },
+    map: [function(uri) {
+      // resolve id
+      var m = uri.match(/kjui\/grid\/1.3.0\/(.*)/);
+      if (m) {
+        return resolve(m[1]);
+      }
+      return uri;
+    }],
+    comboExcludes: {test: function(uri) {
+      return uri.indexOf('http://assets.spmjs.org') === -1;
+    }}
+  });
+
+  function resolve(file) {
+    if (contain(query, 'debug')) {
+      if (file.indexOf('-debug') === -1) {
+        file = file.replace(/\.(\w+)$/, '-debug.$1');
+      }
     }
+    return seajs.resolve("../" + srcdir + "/" + file);
+  }
+
+  function contain(arr, value) {
+    for (var i in arr) {
+      if (arr[i] === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+      seajs.config({ alias: {"widget":"arale/widget/1.0.3/widget","templatable":"arale/widget/1.0.3/templatable","handlebars":"gallery/handlebars/1.0.0/handlebars","underscore":"gallery/underscore/1.4.4/underscore"}});
+    seajs.use([]);
+
+    seajs.config({alias: {
+      "$-debug": 'jquery/jquery/1.7.2/jquery-debug'
+        ,"loading": resolve("loading.js")
+        ,"grid": resolve("grid.js")
+    }});
   })();
 </script>
+<link rel="stylesheet" href="http://stonelee.info/kjui-extui/dist/extui.css" />
+    <script src="../static/js/site.js"></script>
     <!--[if lt IE 9]>
     <script src="../static/js/html5shiv.js"></script>
     <![endif]-->
@@ -53,25 +101,22 @@
       <h1>
           <a href="../">Grid</a><sup class="package-root"><a href="/">kjui</a></sup>
       </h1>
-        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.1.0</a></p>
-        <p class="description">grid</p>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#kjui-grid" title="点击查看此组件发布情况">1.3.0</a></p>
+        <p class="description">提供了表格展示功能，可以分页，点击，排序</p>
         <a class="source" href="https://github.com/stonelee/kjui-grid.git" target="_blank">View the Project</a>
         <ul id="navigation" role="navigation">
           <li><a href="../">文档</a></li>
-          <li><a href="../examples/">演示</a></li>
+          <li><a href="index.html">演示</a></li>
           <li><a class="issue-link" href="https://github.com/stonelee/kjui-grid/issues" target="_blank">讨论</a></li>
         </ul>
         
 <ol id="sidenav">
-  <li><a href="../examples/">基本用法</a></li>
-  <li><a href="../examples/size.html">不同宽度高度</a></li>
-  <li><a href="../examples/more.html">更多</a></li>
+  <li><a href="index.html">基本用法</a></li>
+  <li><a href="size.html">不同宽度高度</a></li>
+  <li><a href="more.html">更多</a></li>
 </ol>
-
-<ul id="module-output"> 
-</ul>
 <div id="output-card">
-    <h3>kjui/grid/1.1.0/<a target="_blank" id="output-file"></a></h3>
+    <h3>kjui/grid/1.3.0/<a target="_blank" id="output-file"></a></h3>
     <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
 </div>
 
@@ -81,17 +126,17 @@
 <article class="hentry">
   <h1 class="entry-title">基本用法</h1>
   <div class="entry-content">
-    <h2 id="%E6%A0%87%E5%87%86grid">标准grid</h2><div class="nico-iframe">
-<iframe src="iframe-examples-index-1.html" allowtransparency="true" 
-frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"demo1"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-
+    <h2 id="标准grid">标准grid</h2><div class="nico-iframe">
+<iframe src="iframe-index-1.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml">
 <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.1.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
 
   <span class="keyword">var</span> fields = [{
     header: <span class="string">'编号'</span>,
+    name: <span class="string">'id'</span>,
     align: <span class="string">'center'</span>,
-    name: <span class="string">'id'</span>
+    sort: <span class="literal">true</span>
   }, {
     header: <span class="string">'验票站名称'</span>,
     name: <span class="string">'stationName'</span>,
@@ -101,8 +146,8 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.1.
     name: <span class="string">'mineName'</span>
   }, {
     header: <span class="string">'车牌号'</span>,
-    width: <span class="number">80</span>,
-    name: <span class="string">'licensePlateNumber'</span>
+    name: <span class="string">'licensePlateNumber'</span>,
+    width: <span class="number">80</span>
   }, {
     header: <span class="string">'矿种'</span>,
     name: <span class="string">'coalType'</span>
@@ -112,6 +157,75 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.1.
     render: <span class="keyword">function</span>(value) {
       <span class="keyword">return</span> <span class="string">'&lt;b&gt;'</span> + value + <span class="string">'吨&lt;/b&gt;'</span>;
     }
+  }, {
+    header: <span class="string">'过站时间'</span>,
+    name: <span class="string">'transitDate'</span>,
+    width: <span class="number">80</span>,
+    sort: <span class="string">'desc'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> value.split(<span class="string">'T'</span>)[<span class="number">0</span>];
+    }
+  }, {
+    header: <span class="string">'详细信息'</span>,
+    name: <span class="string">'id'</span>,
+    align: <span class="string">'center'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
+    }
+  }];
+
+  <span class="keyword">new</span> Grid({
+    url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      height: <span class="number">190</span>
+    },
+    onClick: <span class="keyword">function</span>(target, data) {
+      <span class="keyword">if</span> (target.attr(<span class="string">'data-role'</span>) == <span class="string">'detail'</span>){
+        console.log(data);
+      }
+    },
+    onSort: <span class="keyword">function</span>(name, direction) {
+      alert(name + <span class="string">' '</span> + direction);
+    }
+  }).render();
+
+});
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div><h2 id="复杂表头">复杂表头</h2><div class="nico-iframe">
+<iframe src="iframe-index-2.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="300"></iframe></div><div class="highlight"><pre><code class="xml">
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+
+  <span class="keyword">var</span> fields = [{
+    header: <span class="string">'编号'</span>,
+    name: <span class="string">'id'</span>,
+    align: <span class="string">'center'</span>
+  }, {
+    header: <span class="string">'验票站名称'</span>,
+    name: <span class="string">'stationName'</span>,
+    width: <span class="number">150</span>
+  }, {
+    header: <span class="string">'矿企名称'</span>,
+    name: <span class="string">'mineName'</span>
+  }, {
+    header: <span class="string">'车牌号'</span>,
+    name: <span class="string">'licensePlateNumber'</span>,
+    width: <span class="number">80</span>
+  }, {
+    header: <span class="string">'货物信息'</span>,
+    children: [{
+      header: <span class="string">'矿种'</span>,
+      name: <span class="string">'coalType'</span>
+    }, {
+      header: <span class="string">'毛重'</span>,
+      name: <span class="string">'grossWeight'</span>,
+      render: <span class="keyword">function</span>(value) {
+        <span class="keyword">return</span> <span class="string">'&lt;b&gt;'</span> + value + <span class="string">'吨&lt;/b&gt;'</span>;
+      }
+    }]
   }, {
     header: <span class="string">'过站时间'</span>,
     name: <span class="string">'transitDate'</span>,
@@ -128,27 +242,89 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.1.
     }
   }];
 
-  <span class="keyword">var</span> grid = <span class="keyword">new</span> Grid({
-    element: <span class="string">'#demo1'</span>,
-    title: <span class="string">'title'</span>,
+  <span class="keyword">new</span> Grid({
     url: <span class="string">'./grid_1.json'</span>,
     urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
-    fields: fields,
-    height: <span class="number">190</span>,
-    onClick: <span class="keyword">function</span>(target, data) {
-      <span class="keyword">if</span> (target.attr(<span class="string">'data-role'</span>) == <span class="string">'detail'</span>){
-        console.log(data);
-      }
-    },
-    onSort: <span class="keyword">function</span>(name, direction) {
-      console.log(name, direction);
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      height: <span class="number">190</span>
     }
-  });
-  grid.render();
+  }).render();
 
 });
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</code></pre></div>
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div><h2 id="异常复杂表头">异常复杂表头</h2><div class="nico-iframe">
+<iframe src="iframe-index-3.html" allowtransparency="true" 
+frameborder="0" scrolling="0" height="350"></iframe></div><div class="highlight"><pre><code class="xml">
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.3.0/grid'</span>], <span class="keyword">function</span>($, Grid) {
+
+  <span class="keyword">var</span> fields = [{
+    header: <span class="string">'编号'</span>,
+    name: <span class="string">'id'</span>,
+    width: <span class="number">80</span>,
+    align: <span class="string">'center'</span>
+  }, {
+    header: <span class="string">'名称'</span>,
+    children: [{
+      header: <span class="string">'验票站名称'</span>,
+      name: <span class="string">'stationName'</span>,
+      width: <span class="number">150</span>
+    }, {
+      header: <span class="string">'矿企名称'</span>,
+      name: <span class="string">'mineName'</span>,
+      width: <span class="number">100</span>
+    }]
+  }, {
+    header: <span class="string">'信息'</span>,
+    children: [{
+      header: <span class="string">'车牌号'</span>,
+      name: <span class="string">'licensePlateNumber'</span>,
+      width: <span class="number">180</span>
+    }, {
+      header: <span class="string">'货物信息'</span>,
+      children: [{
+        header: <span class="string">'矿种'</span>,
+        name: <span class="string">'coalType'</span>,
+        width: <span class="number">80</span>
+      }, {
+        header: <span class="string">'毛重'</span>,
+        name: <span class="string">'grossWeight'</span>,
+        width: <span class="number">80</span>,
+        render: <span class="keyword">function</span>(value) {
+          <span class="keyword">return</span> <span class="string">'&lt;b&gt;'</span> + value + <span class="string">'吨&lt;/b&gt;'</span>;
+        }
+      }]
+    }]
+  }, {
+    header: <span class="string">'过站时间'</span>,
+    name: <span class="string">'transitDate'</span>,
+    width: <span class="number">200</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> value.split(<span class="string">'T'</span>)[<span class="number">0</span>];
+    }
+  }, {
+    header: <span class="string">'详细信息'</span>,
+    name: <span class="string">'id'</span>,
+    width: <span class="number">200</span>,
+    align: <span class="string">'center'</span>,
+    render: <span class="keyword">function</span>(value) {
+      <span class="keyword">return</span> <span class="string">'&lt;img data-role="detail" src="./application_view_detail.png" width="16" title="详细信息" style="vertical-align:middle;cursor:pointer;"&gt;'</span>;
+    }
+  }];
+
+  <span class="keyword">new</span> Grid({
+    url: <span class="string">'./grid_1.json'</span>,
+    urlParser: <span class="regexp">/(grid_)\d+(.*)/</span>,
+    model: {
+      fields: fields,
+      title: <span class="string">'title'</span>,
+      height: <span class="number">190</span>
+    }
+  }).render();
+
+});
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre></div>
   </div>
 </article>
 </div>
@@ -157,8 +333,11 @@ seajs.use([<span class="string">'$'</span>, <span class="string">'kjui/grid/1.1.
     </div>
     <div id="footer-wrapper">
       <footer>
-        <p class="powered">
-        
+        <p class="powered"><a href="http://aralejs.org">Arale</a> •
+<a href="http://aliceui.org">Alice</a> •
+<a href="http://seajs.org">SeaJS</a> •
+<a href="https://spmjs.org">spmjs.org</a> •
+<a href="http://lab.lepture.com/nico/">nico</a>
         </p>
       </footer>
     </div>
